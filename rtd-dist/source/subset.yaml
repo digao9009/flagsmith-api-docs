@@ -1,0 +1,926 @@
+openapi: 3.1.0
+info:
+  title: Flagsmith API
+  version: v1
+  description: Flagsmith's Core and SDK APIs. Check out <a href='https://docs.flagsmith.com'>Flagsmith
+    documentation</a>.
+  contact:
+    email: support@flagsmith.com
+  license:
+    name: BSD License
+    identifier: BSD-3-Clause
+servers:
+- url: https://api.flagsmith.com
+  description: Flagsmith API
+paths:
+  /api/v1/analytics/flags/:
+    post:
+      operationId: api_v1_analytics_flags_create
+      description: Class to handle flag analytics events
+      responses:
+        '201':
+          description: No response body
+      security:
+      - Environment API Key: []
+      tags:
+      - Analytics
+  /api/v1/auth/logout/:
+    post:
+      operationId: api_v1_auth_logout_create
+      description: Use this endpoint to logout user (remove user authentication token).
+      responses:
+        '204':
+          description: No response body
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - Authentication
+  /api/v1/cb-webhook/:
+    post:
+      operationId: api_v1_cb_webhook_create
+      description: "Endpoint to handle webhooks from chargebee.\n\nPayment failure\
+        \ and payment succeeded webhooks are filtered out and processed\nto determine\
+        \ which of our subscriptions are in a dunning state.\n\nThe remaining webhooks\
+        \ are processed if they have subscription data:\n\n - If subscription is active,\
+        \ check to see if plan has changed and update if so. Always update cancellation\
+        \ date to\n   None to ensure that if a subscription is reactivated, it is\
+        \ updated on our end.\n\n - If subscription is cancelled or not renewing,\
+        \ update subscription on our end to include cancellation date and\n   send\
+        \ alert to admin users."
+      responses:
+        '200':
+          description: No response body
+      security:
+      - basicAuth: []
+      tags:
+      - Webhooks
+  /api/v1/environments/{environment_api_key}/api-keys/{id}/:
+    put:
+      operationId: api_v1_environments_api_keys_update
+      description: Manage server-side SDK keys for an environment.
+      parameters:
+      - name: environment_api_key
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: A unique integer value identifying this environment api key.
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvironmentAPIKey'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EnvironmentAPIKey'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EnvironmentAPIKey'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentAPIKey'
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - Environments
+  /api/v1/environments/{environment_api_key}/cohorts/{cohort_id}/:
+    delete:
+      operationId: api_v1_environments_cohorts_destroy
+      description: Request cohort deletion. Memberships are drained from identity
+        data first; the cohort and its segment are deleted once drained.
+      parameters:
+      - name: cohort_id
+        in: path
+        description: A unique integer value identifying this cohort.
+        required: true
+        schema:
+          type: integer
+      - name: environment_api_key
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '202':
+          description: No response body
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - Environments
+      x-flagsmith-minimum-plan: START_UP
+  /api/v1/environments/{environment_api_key}/cohorts/sync-keys/{prefix}/:
+    delete:
+      operationId: api_v1_environments_cohorts_sync_keys_destroy
+      description: Revoke a cohort sync key.
+      parameters:
+      - name: environment_api_key
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: prefix
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No response body
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - Environments
+      x-flagsmith-minimum-plan: START_UP
+  /api/v1/environments/{environment_api_key}/experiment-metrics/{id}/:
+    delete:
+      operationId: api_v1_environments_experiment_metrics_destroy
+      description: Manage experiment metrics for an environment.
+      parameters:
+      - name: environment_api_key
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: A unique integer value identifying this metric.
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: No response body
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - Environments
+  /api/v1/environments/{environment_api_key}/experiments/{experiment_experiment_id}/metrics/{id}/:
+    delete:
+      operationId: api_v1_environments_experiments_metrics_destroy
+      description: Manage metrics for an experiment.
+      parameters:
+      - name: environment_api_key
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: experiment_experiment_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No response body
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - Environments
+  /api/v1/environments/{environment_api_key}/experiments/{experiment_id}/:
+    delete:
+      operationId: api_v1_environments_experiments_destroy
+      description: Manage experiments for an environment.
+      parameters:
+      - name: environment_api_key
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: experiment_id
+        in: path
+        description: A unique integer value identifying this experiment.
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: No response body
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - Environments
+  /api/v1/environments/{environment_api_key}/featurestates/{id}/:
+    delete:
+      operationId: api_v1_environments_featurestates_destroy
+      description: 'View set to manage feature states. Nested beneath environments
+        and environments + identities
+
+        to allow for filtering on both.'
+      parameters:
+      - name: environment_api_key
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: A unique integer value identifying this feature state.
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: No response body
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - Feature states
+  /api/v1/environments/{environment_api_key}/identities/{identity_pk}/featurestates/{id}/:
+    delete:
+      operationId: api_v1_environments_identities_featurestates_destroy
+      description: 'View set to manage feature states. Nested beneath environments
+        and environments + identities
+
+        to allow for filtering on both.'
+      parameters:
+      - name: environment_api_key
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: A unique integer value identifying this feature state.
+        required: true
+        schema:
+          type: integer
+      - name: identity_pk
+        in: path
+        required: true
+        schema:
+          type:
+          - integer
+          - 'null'
+      responses:
+        '204':
+          description: No response body
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - Identities
+  /api/v1/environments/{environment_api_key}/warehouse-connections/{connection_id}/:
+    delete:
+      operationId: api_v1_environments_warehouse_connections_destroy
+      description: Manage data warehouse connections for an environment.
+      parameters:
+      - name: connection_id
+        in: path
+        description: A unique integer value identifying this warehouse connection.
+        required: true
+        schema:
+          type: integer
+      - name: environment_api_key
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No response body
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - Environments
+  /api/v1/environments/{environment_api_key}/webhooks/{id}/:
+    delete:
+      operationId: api_v1_environments_webhooks_destroy
+      description: Manage webhooks for an environment.
+      parameters:
+      - name: environment_api_key
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: A unique integer value identifying this webhook.
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: No response body
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - Webhooks
+  /api/v1/features/download-feature-export/{feature_export_id}/:
+    get:
+      operationId: api_v1_features_download_feature_export_retrieve
+      description: This endpoint is to download a feature export file from a specific
+        environment
+      parameters:
+      - name: feature_export_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - Features
+  /api/v1/features/download-flagsmith-on-flagsmith/:
+    get:
+      operationId: api_v1_features_download_flagsmith_on_flagsmith_retrieve
+      description: This endpoint is to download a feature export to enable Flagsmith
+        on Flagsmith
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      - {}
+      tags:
+      - Features
+  /api/v1/features/feature-segments/{id}/:
+    delete:
+      operationId: delete_feature_segment
+      description: 'Deletes a segment override. Applies to environments without v2
+        feature versioning (use_v2_feature_versioning: false).'
+      parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this feature segment.
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: No response body
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - mcp
+  /api/v1/flags/:
+    get:
+      operationId: sdk_v1_flags
+      description: 'Retrieve the feature flags for an environment.
+
+
+        ---
+
+        *Note*: when providing the `feature` query argument, this endpoint will
+
+        return either a single object or a 404 (if the feature does not exist) rather
+
+        than a list.
+
+
+        ---
+
+        *Note*: using this endpoint with an identifier is deprecated.
+
+        Please use `/api/v1/identities/?identifier=<identifier>` instead.'
+      parameters:
+      - name: feature
+        in: query
+        description: Name of the feature to get the state of
+        schema:
+          type: string
+          minLength: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: Represents a single flag (feature state) returned by
+                    the Flagsmith SDK.
+                  properties:
+                    feature:
+                      description: Represents a Flagsmith feature, defined at project
+                        level.
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        type:
+                          type: string
+                          enum:
+                          - STANDARD
+                          - MULTIVARIATE
+                      required:
+                      - id
+                      - name
+                      - type
+                    enabled:
+                      type: boolean
+                    feature_state_value:
+                      nullable: true
+                      oneOf:
+                      - type: integer
+                      - type: boolean
+                      - type: string
+                    variant:
+                      type: string
+                      nullable: true
+                    reason:
+                      type: string
+                      nullable: true
+                  required:
+                  - enabled
+                  - feature
+                  - feature_state_value
+      security:
+      - Environment API Key: []
+      tags:
+      - sdk
+  /api/v1/flags/{identifier}:
+    get:
+      operationId: sdk_v1_flags_2
+      description: 'Retrieve the feature flags for an environment.
+
+
+        ---
+
+        *Note*: when providing the `feature` query argument, this endpoint will
+
+        return either a single object or a 404 (if the feature does not exist) rather
+
+        than a list.
+
+
+        ---
+
+        *Note*: using this endpoint with an identifier is deprecated.
+
+        Please use `/api/v1/identities/?identifier=<identifier>` instead.'
+      parameters:
+      - name: feature
+        in: query
+        description: Name of the feature to get the state of
+        schema:
+          type: string
+          minLength: 1
+      - name: identifier
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[-\w@%.]+$
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: Represents a single flag (feature state) returned by
+                    the Flagsmith SDK.
+                  properties:
+                    feature:
+                      description: Represents a Flagsmith feature, defined at project
+                        level.
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        type:
+                          type: string
+                          enum:
+                          - STANDARD
+                          - MULTIVARIATE
+                      required:
+                      - id
+                      - name
+                      - type
+                    enabled:
+                      type: boolean
+                    feature_state_value:
+                      nullable: true
+                      oneOf:
+                      - type: integer
+                      - type: boolean
+                      - type: string
+                    variant:
+                      type: string
+                      nullable: true
+                    reason:
+                      type: string
+                      nullable: true
+                  required:
+                  - enabled
+                  - feature
+                  - feature_state_value
+      security:
+      - Environment API Key: []
+      tags:
+      - sdk
+  /api/v1/oauth/authorize/:
+    post:
+      operationId: api_v1_oauth_authorize_create
+      description: Process a consent decision and return the redirect URI.
+      responses:
+        '200':
+          description: No response body
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - Other
+  /api/v1/projects/{project_pk}/features/{feature_pk}/mv-options/{id}/:
+    delete:
+      operationId: delete_feature_multivariate_option
+      description: Deletes a multivariate option.
+      parameters:
+      - name: feature_pk
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: id
+        in: path
+        description: A unique integer value identifying this multivariate feature
+          option.
+        required: true
+        schema:
+          type: integer
+      - name: project_pk
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No response body
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - mcp
+  /api/v1/analytics/telemetry/:
+    post:
+      operationId: api_v1_analytics_telemetry_create
+      description: 'Class to handle telemetry events from self hosted APIs so we can
+        aggregate and track
+
+        self hosted installation data'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Telemetry'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Telemetry'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Telemetry'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Telemetry'
+      tags:
+      - Analytics
+  /api/v1/auth/login/:
+    post:
+      operationId: api_v1_auth_login_create
+      description: Class to handle throttling for login requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenCreate'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenCreate'
+      tags:
+      - Authentication
+  /api/v1/auth/login/code/:
+    post:
+      operationId: api_v1_auth_login_code_create
+      description: Override class to add throttling
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenCreate'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenCreate'
+      tags:
+      - Authentication
+  /api/v1/cohort-sync/webhook/cohorts/{id}/members/add/:
+    post:
+      operationId: api_v1_cohort_sync_webhook_cohorts_members_add_create
+      description: Add members to a CSV cohort. Accepted deltas are applied to identity
+        data asynchronously. Re-adding a member is a no-op, so retries are safe.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookSyncMembers'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WebhookSyncMembers'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WebhookSyncMembers'
+      responses:
+        '200':
+          description: No response body
+      security:
+      - Cohort Sync Key: []
+      - Cohort Sync Key (Basic): []
+      tags:
+      - Webhooks
+      x-flagsmith-minimum-plan: START_UP
+  /api/v1/cohort-sync/webhook/cohorts/{id}/members/remove/:
+    post:
+      operationId: api_v1_cohort_sync_webhook_cohorts_members_remove_create
+      description: Remove members from a CSV cohort. Accepted deltas are applied to
+        identity data asynchronously. Removing a non-member is a no-op, so retries
+        are safe.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookSyncMembers'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WebhookSyncMembers'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WebhookSyncMembers'
+      responses:
+        '200':
+          description: No response body
+      security:
+      - Cohort Sync Key: []
+      - Cohort Sync Key (Basic): []
+      tags:
+      - Webhooks
+      x-flagsmith-minimum-plan: START_UP
+  /api/v1/environment-feature-versions/{id}/:
+    get:
+      operationId: api_v1_environment_feature_versions_retrieve
+      description: 'This is an additional endpoint to retrieve a specific version
+        without needing
+
+        to provide the environment or feature as part of the URL.'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentFeatureVersionRetrieve'
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - Feature states
+  /api/v1/environments/{environment_api_key}/api-keys/:
+    post:
+      operationId: api_v1_environments_api_keys_create
+      description: Manage server-side SDK keys for an environment.
+      parameters:
+      - name: environment_api_key
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvironmentAPIKey'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EnvironmentAPIKey'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EnvironmentAPIKey'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentAPIKey'
+      security:
+      - tokenAuth: []
+      - Master API Key: []
+      tags:
+      - Environments
+components:
+  schemas:
+    EnvironmentFeatureVersionRetrieve:
+      type: object
+      properties:
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        published:
+          type: boolean
+          readOnly: true
+        live_from:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        is_live:
+          type: boolean
+          readOnly: true
+        published_by:
+          type:
+          - integer
+          - 'null'
+          readOnly: true
+        created_by:
+          type:
+          - integer
+          - 'null'
+          readOnly: true
+        description:
+          type:
+          - string
+          - 'null'
+        previous_version_uuid:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        feature:
+          type: integer
+          readOnly: true
+        environment:
+          type: integer
+          readOnly: true
+    TokenCreate:
+      type: object
+      properties:
+        password:
+          type: string
+        email:
+          type: string
+    Telemetry:
+      type: object
+      properties:
+        organisations:
+          type: integer
+        projects:
+          type: integer
+        environments:
+          type: integer
+        features:
+          type: integer
+        segments:
+          type: integer
+        users:
+          type: integer
+        debug_enabled:
+          type: boolean
+        env:
+          type: string
+      required:
+      - debug_enabled
+      - env
+      - environments
+      - features
+      - organisations
+      - projects
+      - segments
+      - users
+    EnvironmentAPIKey:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        key:
+          type: string
+          readOnly: true
+        active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+      required:
+      - name
+    WebhookSyncMembers:
+      type: object
+      properties:
+        identifiers:
+          description: Identity identifiers, each at most 1024 bytes of UTF-8.
+          type: array
+          items:
+            type: string
+          maxItems: 10000
+          minItems: 1
+      required:
+      - identifiers

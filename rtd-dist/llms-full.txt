@@ -1,0 +1,330 @@
+# Flagsmith API Reference
+
+Flagsmith's Core and SDK APIs. Check out <a href='https://docs.flagsmith.com'>Flagsmith documentation</a>.
+
+## API Reference
+
+### Flagsmith API
+
+Path: `/api-reference.html`
+Version: v1
+
+Flagsmith's Core and SDK APIs. Check out <a href='https://docs.flagsmith.com'>Flagsmith documentation</a>.
+
+#### Operations
+
+##### POST /api/v1/analytics/flags/
+
+Class to handle flag analytics events
+
+Responses:
+- 201: No response body
+
+##### POST /api/v1/auth/logout/
+
+Use this endpoint to logout user (remove user authentication token).
+
+Responses:
+- 204: No response body
+
+##### POST /api/v1/cb-webhook/
+
+Endpoint to handle webhooks from chargebee.
+
+Payment failure and payment succeeded webhooks are filtered out and processed
+to determine which of our subscriptions are in a dunning state.
+
+The remaining webhooks are processed if they have subscription data:
+
+ - If subscription is active, check to see if plan has changed and update if so. Always update cancellation date to
+   None to ensure that if a subscription is reactivated, it is updated on our end.
+
+ - If subscription is cancelled or not renewing, update subscription on our end to include cancellation date and
+   send alert to admin users.
+
+Responses:
+- 200: No response body
+
+##### PUT /api/v1/environments/{environment_api_key}/api-keys/{id}/
+
+Manage server-side SDK keys for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this environment api key.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/cohorts/{cohort_id}/
+
+Request cohort deletion. Memberships are drained from identity data first; the cohort and its segment are deleted once drained.
+
+Parameters:
+- `cohort_id` (path, integer, required) - A unique integer value identifying this cohort.
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 202: No response body
+
+##### DELETE /api/v1/environments/{environment_api_key}/cohorts/sync-keys/{prefix}/
+
+Revoke a cohort sync key.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `prefix` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### DELETE /api/v1/environments/{environment_api_key}/experiment-metrics/{id}/
+
+Manage experiment metrics for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this metric.
+
+Responses:
+- 204: No response body
+
+##### DELETE /api/v1/environments/{environment_api_key}/experiments/{experiment_experiment_id}/metrics/{id}/
+
+Manage metrics for an experiment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_experiment_id` (path, string, required)
+- `id` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### DELETE /api/v1/environments/{environment_api_key}/experiments/{experiment_id}/
+
+Manage experiments for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_id` (path, integer, required) - A unique integer value identifying this experiment.
+
+Responses:
+- 204: No response body
+
+##### DELETE /api/v1/environments/{environment_api_key}/featurestates/{id}/
+
+View set to manage feature states. Nested beneath environments and environments + identities
+to allow for filtering on both.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature state.
+
+Responses:
+- 204: No response body
+
+##### DELETE /api/v1/environments/{environment_api_key}/identities/{identity_pk}/featurestates/{id}/
+
+View set to manage feature states. Nested beneath environments and environments + identities
+to allow for filtering on both.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature state.
+- `identity_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### DELETE /api/v1/environments/{environment_api_key}/warehouse-connections/{connection_id}/
+
+Manage data warehouse connections for an environment.
+
+Parameters:
+- `connection_id` (path, integer, required) - A unique integer value identifying this warehouse connection.
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### DELETE /api/v1/environments/{environment_api_key}/webhooks/{id}/
+
+Manage webhooks for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this webhook.
+
+Responses:
+- 204: No response body
+
+##### GET /api/v1/features/download-feature-export/{feature_export_id}/
+
+This endpoint is to download a feature export file from a specific environment
+
+Parameters:
+- `feature_export_id` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/features/download-flagsmith-on-flagsmith/
+
+This endpoint is to download a feature export to enable Flagsmith on Flagsmith
+
+Responses:
+- 200
+
+##### DELETE /api/v1/features/feature-segments/{id}/
+
+Deletes a segment override. Applies to environments without v2 feature versioning (use_v2_feature_versioning: false).
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature segment.
+
+Responses:
+- 204: No response body
+
+##### GET /api/v1/flags/
+
+Retrieve the feature flags for an environment.
+
+---
+*Note*: when providing the `feature` query argument, this endpoint will
+return either a single object or a 404 (if the feature does not exist) rather
+than a list.
+
+---
+*Note*: using this endpoint with an identifier is deprecated.
+Please use `/api/v1/identities/?identifier=<identifier>` instead.
+
+Parameters:
+- `feature` (query, string, optional) - Name of the feature to get the state of
+
+Responses:
+- 200
+
+##### GET /api/v1/flags/{identifier}
+
+Retrieve the feature flags for an environment.
+
+---
+*Note*: when providing the `feature` query argument, this endpoint will
+return either a single object or a 404 (if the feature does not exist) rather
+than a list.
+
+---
+*Note*: using this endpoint with an identifier is deprecated.
+Please use `/api/v1/identities/?identifier=<identifier>` instead.
+
+Parameters:
+- `feature` (query, string, optional) - Name of the feature to get the state of
+- `identifier` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/oauth/authorize/
+
+Process a consent decision and return the redirect URI.
+
+Responses:
+- 200: No response body
+
+##### DELETE /api/v1/projects/{project_pk}/features/{feature_pk}/mv-options/{id}/
+
+Deletes a multivariate option.
+
+Parameters:
+- `feature_pk` (path, integer, required)
+- `id` (path, integer, required) - A unique integer value identifying this multivariate feature option.
+- `project_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### POST /api/v1/analytics/telemetry/
+
+Class to handle telemetry events from self hosted APIs so we can aggregate and track
+self hosted installation data
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### POST /api/v1/auth/login/
+
+Class to handle throttling for login requests
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/login/code/
+
+Override class to add throttling
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/cohort-sync/webhook/cohorts/{id}/members/add/
+
+Add members to a CSV cohort. Accepted deltas are applied to identity data asynchronously. Re-adding a member is a no-op, so retries are safe.
+
+Parameters:
+- `id` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/cohort-sync/webhook/cohorts/{id}/members/remove/
+
+Remove members from a CSV cohort. Accepted deltas are applied to identity data asynchronously. Removing a non-member is a no-op, so retries are safe.
+
+Parameters:
+- `id` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/environment-feature-versions/{id}/
+
+This is an additional endpoint to retrieve a specific version without needing
+to provide the environment or feature as part of the URL.
+
+Parameters:
+- `id` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/api-keys/
+
+Manage server-side SDK keys for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+#### Models
+
+- EnvironmentFeatureVersionRetrieve
+- TokenCreate
+- Telemetry
+- EnvironmentAPIKey
+- WebhookSyncMembers

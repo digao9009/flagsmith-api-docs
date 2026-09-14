@@ -1,0 +1,21 @@
+{
+  "summary": "Sourcey-generated static API reference for the Flagsmith API, rendered from a curated 30-operation subset of the pinned upstream OpenAPI spec (commit 9fe3c5c44ea47b2db719bdcf64eb149020721779, BSD-3-Clause; full spec: 615 operations / 472 schemas) and verified by a governed runx validation run (runx-cli 0.9.1) sealed at receipt sha256:3239ab7fba8e77fe6f24b1d5cfca31e36409614a1bce9f0cda149326dcec2120. The docs home is published under the project's name on readthedocs.io — a durable documentation-domain home for readers and crawlers.",
+  "observations": [
+    { "name": "repo_url", "value": "https://github.com/Flagsmith/flagsmith", "note": "Maintained third-party OSS library; repository activity on the build day." },
+    { "name": "commit", "value": "9fe3c5c44ea47b2db719bdcf64eb149020721779", "note": "Pinned public commit the OpenAPI spec was taken from." },
+    { "name": "license", "value": "BSD-3-Clause", "note": "As declared in the spec info.license block." },
+    { "name": "adapter", "value": "openapi", "note": "Sourcey openapi adapter; Sourcey 3.6.5." },
+    { "name": "runx_version", "value": "runx-cli 0.9.1", "note": "Exact output of `runx --version` on the run host (required: 0.6.13 or newer)." },
+    { "name": "sourcey_command", "value": "npx sourcey build", "note": "sourcey.config.ts: openapi tab -> ./subset.yaml (30 curated operations); curl-only code samples; output dist/." },
+    { "name": "page_list", "value": ["index.html", "api-reference.html"], "note": "Navigable Sourcey-generated documentation site; docs home is 806,877 bytes." },
+    { "name": "public_url", "value": "https://flagsmith-api-docs.readthedocs.io/", "note": "Documentation-domain home; sitemap canonicalizes to https://flagsmith-api-docs.readthedocs.io/api-reference.html." },
+    { "name": "spec_file", "value": "source/subset.yaml", "note": "Curated 30-operation subset (27,316 bytes) of the pinned full spec; full spec included at source/flagsmith-openapi.yaml." },
+    { "name": "spec_sha256", "value": "125a0713b0aa767fc066ca2e499341e047ba7e3a650b9919083a205da4120f4a", "note": "Subset spec hash. Full pinned spec sha256: ea52d405a9b1250ff83d1664cbb83df0da4706fa2110c836fb4fe101df417e57." },
+    { "name": "index_sha256", "value": "21c0e53ff4f3a1eee1468d0fd7b2577b98a07849abfbef15df7c2d678f6fba66", "note": "806,877 bytes; title 'Flagsmith API Reference - API Reference'." },
+    { "name": "sitemap_sha256", "value": "4d789c1f151b86bb0284087685a14b5b54ec357bfeeab1f35a3233428613c77f", "note": "Sitemap canonicalizes to the readthedocs.io home." },
+    { "name": "coverage_notes", "value": "30 curated operations from the pinned spec rendered with descriptions, parameters, responses, curl samples, client-side search (32 indexed entries), sitemap.xml, llms.txt and llms-full.txt exports. The curated slice keeps the docs home within crawler byte budgets; the full spec contains 615 operations and 472 schemas." },
+    { "name": "receipt_id", "value": "sha256:3239ab7fba8e77fe6f24b1d5cfca31e36409614a1bce9f0cda149326dcec2120", "note": "runx.receipt.v1, outcome completed, seal closed (process_closed); receipt file published at source/runx-receipt.json." },
+    { "name": "spec_gap_stats", "value": { "operations_without_summary": 612, "operations_without_description": 464, "schemas_without_description": 375 }, "note": "Full-spec maintainer-facing gaps surfaced during generation; see report.md." }
+  ],
+  "verified": true
+}
