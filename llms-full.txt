@@ -1,0 +1,6953 @@
+# Flagsmith API Reference
+
+Flagsmith's Core and SDK APIs. Check out <a href='https://docs.flagsmith.com'>Flagsmith documentation</a>.
+
+## API Reference
+
+### Flagsmith API
+
+Path: `/flagsmith-api-docs/api-reference.html`
+Version: v1
+
+Flagsmith's Core and SDK APIs. Check out <a href='https://docs.flagsmith.com'>Flagsmith documentation</a>.
+
+#### Operations
+
+##### GET /api/__future__/environments/{environment_key}/features/{feature_id}/
+
+Read what the flag serves in the environment.
+
+Parameters:
+- `environment_key` (path, string, required)
+- `feature_id` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/__future__/environments/{environment_key}/features/{feature_id}/
+
+Replace the properties given, resetting what they omit.
+
+Parameters:
+- `environment_key` (path, string, required)
+- `feature_id` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### PATCH /api/__future__/environments/{environment_key}/features/{feature_id}/
+
+Update the properties given, leaving the rest as they are.
+
+Parameters:
+- `environment_key` (path, string, required)
+- `feature_id` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/__future__/environments/{environment_key}/features/{feature_id}/segment-overrides/{segment_id}/
+
+Remove the flag's override for the segment, leaving the rest of the flag as it is.
+
+Parameters:
+- `environment_key` (path, string, required)
+- `feature_id` (path, integer, required)
+- `segment_id` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/experiments/environments/{environment_key}/delete-segment-override/
+
+Summary: Delete segment override
+
+
+    **EXPERIMENTAL ENDPOINT** - Subject to change without notice.
+
+    Deletes a segment override for a feature in the given environment.
+
+    **Feature Identification:**
+    - Use `feature.name` OR `feature.id` (mutually exclusive)
+    - Feature must belong to the environment's project
+
+    **Segment Identification:**
+    - Use `segment.id` (required)
+
+    The segment override must exist for the given feature/environment combination.
+    Returns 400 if the segment override does not exist.
+    
+
+Parameters:
+- `environment_key` (path, string, required) - The environment API key
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 204: No response body
+
+##### POST /api/experiments/environments/{environment_key}/update-flag-v1/
+
+Summary: Update single feature state
+
+
+    **EXPERIMENTAL ENDPOINT** - Subject to change without notice.
+
+    Updates a single feature state within an environment. You can update either:
+    - The environment default state (when no segment is specified)
+    - A specific segment override (when segment.id is provided)
+
+    **Feature Identification:**
+    - Use `feature.name` OR `feature.id` (mutually exclusive)
+
+    **Value Format:**
+    - The `value` field is always a string representation
+    - The `type` field tells the server how to parse it
+    - Available types: integer, string, boolean
+    - Examples:
+      - `{"type": "integer", "value": "42"}`
+      - `{"type": "boolean", "value": "true"}`
+      - `{"type": "string", "value": "hello"}`
+
+    **Segment Priority:**
+    - Optional `segment.priority` field controls ordering
+    - If field value is null or the field is omitted, lowest priority is assumed
+    
+
+Parameters:
+- `environment_key` (path, string, required) - The environment API key
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 204: No response body
+
+##### POST /api/experiments/environments/{environment_key}/update-flag-v2/
+
+Summary: Update multiple feature states
+
+
+    **EXPERIMENTAL ENDPOINT** - Subject to change without notice.
+
+    Updates multiple feature states in a single request. This endpoint allows
+    you to configure an entire feature (environment default + all segment overrides)
+    in one operation.
+
+    **What You Can Update:**
+    - Environment default state (required)
+    - Multiple segment overrides (optional)
+    - Priority ordering for each segment
+
+    **Feature Identification:**
+    - Use `feature.name` OR `feature.id` (mutually exclusive)
+
+    **Value Format:**
+    - The `value` field is always a string representation
+    - The `type` field tells the server how to parse it
+    - Available types: integer, string, boolean
+    - Examples:
+      - `{"type": "string", "value": "production"}`
+      - `{"type": "integer", "value": "100"}`
+      - `{"type": "boolean", "value": "false"}`
+
+    **Segment Overrides:**
+    - Provide array of segment override configurations
+    - Each override must specify: segment_id, enabled, value
+    - Optional priority field controls ordering
+    - Duplicate segment_id values are not allowed
+
+    
+
+Parameters:
+- `environment_key` (path, string, required) - The environment API key
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 204: No response body
+
+##### GET /api/v1/admin/dashboard/integrations/
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/admin/dashboard/organisations/
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/admin/dashboard/release-pipelines/
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/admin/dashboard/stale-flags/
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/admin/dashboard/summary/
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/admin/dashboard/usage-trends/
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/analytics/flags/
+
+Class to handle flag analytics events
+
+Responses:
+- 201: No response body
+
+##### POST /api/v1/analytics/telemetry/
+
+Class to handle telemetry events from self hosted APIs so we can aggregate and track
+self hosted installation data
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/audit/
+
+Parameters:
+- `environments` (query, array, optional)
+- `is_system_event` (query, boolean, optional)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `page_size` (query, integer, optional) - Number of results to return per page.
+- `project` (query, integer, optional)
+- `search` (query, string, optional)
+
+Responses:
+- 200
+
+##### GET /api/v1/audit/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this audit log.
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/{method}/activate/
+
+Parameters:
+- `method` (path, string, required)
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/auth/{method}/activate/confirm/
+
+Parameters:
+- `method` (path, string, required)
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/auth/{method}/deactivate/
+
+Parameters:
+- `method` (path, string, required)
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/auth/login/
+
+Class to handle throttling for login requests
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/login/code/
+
+Override class to add throttling
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/logout/
+
+Use this endpoint to logout user (remove user authentication token).
+
+Responses:
+- 204: No response body
+
+##### GET /api/v1/auth/mfa/user-active-methods/
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/auth/oauth/github/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+- 502
+
+##### POST /api/v1/auth/oauth/google/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+- 502
+
+##### POST /api/v1/auth/oidc/token/
+
+Exchange an OIDC token issued by a trusted identity provider for a short-lived Flagsmith access token.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+- 400: Request body is invalid.
+- 401: Token validation failed, or no trust relationship matches the token.
+
+##### GET /api/v1/auth/saml/{name}/metadata/
+
+Parameters:
+- `format` (query, string, optional)
+- `name` (path, string, required)
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/auth/saml/{name}/request/
+
+Parameters:
+- `format` (query, string, optional)
+- `name` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/saml/{name}/response/
+
+Parameters:
+- `format` (query, string, optional)
+- `name` (path, string, required)
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/auth/saml/attribute-mapping/
+
+Parameters:
+- `organisation` (query, integer, optional)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `saml_configuration` (query, integer, optional)
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/saml/attribute-mapping/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/auth/saml/attribute-mapping/{id}/
+
+Parameters:
+- `id` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/auth/saml/attribute-mapping/{id}/
+
+Parameters:
+- `id` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/auth/saml/attribute-mapping/{id}/
+
+Parameters:
+- `id` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/auth/saml/attribute-mapping/{id}/
+
+Parameters:
+- `id` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/auth/saml/configuration/
+
+Parameters:
+- `organisation` (query, integer, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/saml/configuration/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/auth/saml/configuration/{name}/
+
+Parameters:
+- `name` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/auth/saml/configuration/{name}/
+
+Parameters:
+- `name` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/auth/saml/configuration/{name}/
+
+Parameters:
+- `name` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/auth/saml/configuration/{name}/
+
+Parameters:
+- `name` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/saml/login/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+- 401
+
+##### DELETE /api/v1/auth/token/
+
+Responses:
+- 204: No response body
+
+##### GET /api/v1/auth/users/
+
+Parameters:
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/users/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/auth/users/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this Feature flag admin user.
+
+Responses:
+- 200
+
+##### PUT /api/v1/auth/users/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this Feature flag admin user.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/auth/users/{id}/
+
+Parameters:
+- `current_password` (query, string, optional)
+- `delete_orphan_organisations` (query, boolean, optional)
+- `id` (path, integer, required) - A unique integer value identifying this Feature flag admin user.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/auth/users/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this Feature flag admin user.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/users/activation/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/auth/users/me/
+
+Responses:
+- 200
+
+##### PUT /api/v1/auth/users/me/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/auth/users/me/
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/auth/users/me/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### PATCH /api/v1/auth/users/me/onboarding/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/users/resend_activation/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/users/reset_email/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/users/reset_email_confirm/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/users/reset_password/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/users/reset_password_confirm/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/users/set_email/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/auth/users/set_password/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/cb-webhook/
+
+Endpoint to handle webhooks from chargebee.
+
+Payment failure and payment succeeded webhooks are filtered out and processed
+to determine which of our subscriptions are in a dunning state.
+
+The remaining webhooks are processed if they have subscription data:
+
+ - If subscription is active, check to see if plan has changed and update if so. Always update cancellation date to
+   None to ensure that if a subscription is reactivated, it is updated on our end.
+
+ - If subscription is cancelled or not renewing, update subscription on our end to include cancellation date and
+   send alert to admin users.
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/cohort-sync/amplitude/lists/
+
+Called by Amplitude once per cohort sync setup; creates the backing cohort and returns its identifier as the list ID.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/cohort-sync/amplitude/lists/{id}/add/
+
+Parameters:
+- `id` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/cohort-sync/amplitude/lists/{id}/remove/
+
+Parameters:
+- `id` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/cohort-sync/mixpanel/webhook/
+
+Called by Mixpanel every sync cycle with the cohort's full membership (`members`) or the changes since the last sync (`add_members`/`remove_members`).
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+- 400
+- 404
+
+##### POST /api/v1/cohort-sync/webhook/cohorts/{id}/members/add/
+
+Add members to a CSV cohort. Accepted deltas are applied to identity data asynchronously. Re-adding a member is a no-op, so retries are safe.
+
+Parameters:
+- `id` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/cohort-sync/webhook/cohorts/{id}/members/remove/
+
+Remove members from a CSV cohort. Accepted deltas are applied to identity data asynchronously. Removing a non-member is a no-op, so retries are safe.
+
+Parameters:
+- `id` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/environment-document/
+
+Retrieve the environment document.
+Used by SDKs in local evaluation mode, and Edge Proxy.
+
+Responses:
+- 200
+
+##### GET /api/v1/environment-feature-versions/{id}/
+
+This is an additional endpoint to retrieve a specific version without needing
+to provide the environment or feature as part of the URL.
+
+Parameters:
+- `id` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/
+
+Lists all environments the user has access to
+
+Parameters:
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `project` (query, integer, optional) - ID of the project to filter by.
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{api_key}/
+
+Parameters:
+- `api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{api_key}/
+
+Parameters:
+- `api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{api_key}/
+
+Parameters:
+- `api_key` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{api_key}/
+
+Parameters:
+- `api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{api_key}/clone/
+
+Parameters:
+- `api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{api_key}/delete-traits/
+
+Parameters:
+- `api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{api_key}/disable-v2-versioning/
+
+Parameters:
+- `api_key` (path, string, required)
+
+Responses:
+- 202: No response body
+
+##### GET /api/v1/environments/{api_key}/document/
+
+Parameters:
+- `api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{api_key}/enable-v2-versioning/
+
+Parameters:
+- `api_key` (path, string, required)
+
+Responses:
+- 202: No response body
+
+##### GET /api/v1/environments/{api_key}/my-permissions/
+
+Parameters:
+- `api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{api_key}/trait-keys/
+
+Parameters:
+- `api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{api_key}/user-detailed-permissions/{user_id}/
+
+Parameters:
+- `api_key` (path, string, required)
+- `user_id` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/api-keys/
+
+Manage server-side SDK keys for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/api-keys/
+
+Manage server-side SDK keys for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### PUT /api/v1/environments/{environment_api_key}/api-keys/{id}/
+
+Manage server-side SDK keys for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this environment api key.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/api-keys/{id}/
+
+Manage server-side SDK keys for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this environment api key.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/api-keys/{id}/
+
+Manage server-side SDK keys for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this environment api key.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/cohorts/
+
+List the environment's cohorts.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/cohorts/
+
+Create a cohort and the managed segment that targets it.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/cohorts/{cohort_id}/
+
+Retrieve a cohort.
+
+Parameters:
+- `cohort_id` (path, integer, required) - A unique integer value identifying this cohort.
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/cohorts/{cohort_id}/
+
+Request cohort deletion. Memberships are drained from identity data first; the cohort and its segment are deleted once drained.
+
+Parameters:
+- `cohort_id` (path, integer, required) - A unique integer value identifying this cohort.
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 202: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/cohorts/{cohort_id}/
+
+Update the cohort's managed segment name, description and metadata.
+
+Parameters:
+- `cohort_id` (path, integer, required) - A unique integer value identifying this cohort.
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/cohorts/{cohort_id}/sync-csv/
+
+Replace the cohort's members with the identifiers found in the uploaded CSV file and trigger a sync to identity data. `identifier_column` is the 0-based index of the column holding the identifiers; `has_header` skips the first row when true.
+
+Parameters:
+- `cohort_id` (path, integer, required) - A unique integer value identifying this cohort.
+- `environment_api_key` (path, string, required)
+
+Request body: multipart/form-data
+
+Responses:
+- 202
+- 400
+- 413
+
+##### GET /api/v1/environments/{environment_api_key}/cohorts/sync-keys/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/cohorts/sync-keys/
+
+Create a cohort sync key. The response is the only time the plaintext key is available.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### DELETE /api/v1/environments/{environment_api_key}/cohorts/sync-keys/{prefix}/
+
+Revoke a cohort sync key.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `prefix` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### POST /api/v1/environments/{environment_api_key}/create-change-request/
+
+Creates a new change request for feature flag modifications in an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+- 400
+
+##### GET /api/v1/environments/{environment_api_key}/edge-identities/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `last_evaluated_key` (query, string, optional) - Used as the starting point for the page
+- `page_size` (query, integer, optional) - Number of results to return per page.
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/edge-identities/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/edge-identities/{edge_identity_identity_uuid}/edge-featurestates/
+
+Parameters:
+- `edge_identity_identity_uuid` (path, string, required)
+- `environment_api_key` (path, string, required)
+- `feature` (query, integer, optional) - ID of the feature to filter by
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/edge-identities/{edge_identity_identity_uuid}/edge-featurestates/
+
+Parameters:
+- `edge_identity_identity_uuid` (path, string, required)
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/edge-identities/{edge_identity_identity_uuid}/edge-featurestates/{featurestate_uuid}/
+
+Parameters:
+- `edge_identity_identity_uuid` (path, string, required)
+- `environment_api_key` (path, string, required)
+- `featurestate_uuid` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/edge-identities/{edge_identity_identity_uuid}/edge-featurestates/{featurestate_uuid}/
+
+Parameters:
+- `edge_identity_identity_uuid` (path, string, required)
+- `environment_api_key` (path, string, required)
+- `featurestate_uuid` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/edge-identities/{edge_identity_identity_uuid}/edge-featurestates/{featurestate_uuid}/
+
+Parameters:
+- `edge_identity_identity_uuid` (path, string, required)
+- `environment_api_key` (path, string, required)
+- `featurestate_uuid` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### GET /api/v1/environments/{environment_api_key}/edge-identities/{edge_identity_identity_uuid}/edge-featurestates/all/
+
+Parameters:
+- `edge_identity_identity_uuid` (path, string, required)
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/edge-identities/{edge_identity_identity_uuid}/edge-featurestates/clone-from-given-identity/
+
+Clone feature states from a given source identity.
+
+Parameters:
+- `edge_identity_identity_uuid` (path, string, required)
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/edge-identities/{identity_uuid}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `identity_uuid` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/edge-identities/{identity_uuid}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `identity_uuid` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/edge-identities/{identity_uuid}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `identity_uuid` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/edge-identities/{identity_uuid}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `identity_uuid` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/edge-identities/{identity_uuid}/list-traits/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `identity_uuid` (path, string, required)
+- `last_evaluated_key` (query, string, optional) - Used as the starting point for the page
+- `page_size` (query, integer, optional) - Number of results to return per page.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/edge-identities/{identity_uuid}/update-traits/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `identity_uuid` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/edge-identity-overrides
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `feature` (query, integer, optional)
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/experiment-metrics/
+
+(Beta) Lists experiment metrics for an environment. Supports search by name via the q parameter.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `page_size` (query, integer, optional) - Number of results to return per page.
+- `q` (query, string, optional) - Search metrics by name.
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/experiment-metrics/
+
+(Beta) Creates a metric with name, description, aggregation type, expected direction, and event definition.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/experiment-metrics/{id}/
+
+(Beta) Retrieves details of a specific metric, including which experiments use it.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this metric.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/experiment-metrics/{id}/
+
+(Beta) Updates a metric's properties.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this metric.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/experiment-metrics/{id}/
+
+Manage experiment metrics for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this metric.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/experiment-metrics/{id}/
+
+Manage experiment metrics for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this metric.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/experiments/
+
+(Beta) Lists experiments for an environment. Supports filtering by status and searching by experiment or feature name.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `page_size` (query, integer, optional) - Number of results to return per page.
+- `q` (query, string, optional) - Search by experiment or feature name.
+- `status` (query, string, optional) - Filter by experiment status (DRAFT, RUNNING, PAUSED, COMPLETED).
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/experiments/
+
+(Beta) Creates an experiment for a multivariate feature. Metrics can be attached inline. Only one active experiment per feature is allowed.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/experiments/{experiment_experiment_id}/metrics/
+
+Manage metrics for an experiment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_experiment_id` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/experiments/{experiment_experiment_id}/metrics/
+
+Manage metrics for an experiment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_experiment_id` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/experiments/{experiment_experiment_id}/metrics/{id}/
+
+Manage metrics for an experiment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_experiment_id` (path, string, required)
+- `id` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/experiments/{experiment_experiment_id}/metrics/{id}/
+
+Manage metrics for an experiment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_experiment_id` (path, string, required)
+- `id` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/experiments/{experiment_experiment_id}/metrics/{id}/
+
+Manage metrics for an experiment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_experiment_id` (path, string, required)
+- `id` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/experiments/{experiment_experiment_id}/metrics/{id}/
+
+Manage metrics for an experiment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_experiment_id` (path, string, required)
+- `id` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/experiments/{experiment_id}/
+
+(Beta) Retrieves experiment details including feature configuration, attached metrics, and rollout state.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_id` (path, integer, required) - A unique integer value identifying this experiment.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/experiments/{experiment_id}/
+
+(Beta) Updates an experiment's name or its hypothesis.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_id` (path, integer, required) - A unique integer value identifying this experiment.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/experiments/{experiment_id}/
+
+Manage experiments for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_id` (path, integer, required) - A unique integer value identifying this experiment.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/experiments/{experiment_id}/
+
+Manage experiments for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_id` (path, integer, required) - A unique integer value identifying this experiment.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/experiments/{experiment_id}/complete/
+
+Manage experiments for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_id` (path, integer, required) - A unique integer value identifying this experiment.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/experiments/{experiment_id}/exposures/
+
+(Beta) Retrieves variant exposure counts for an experiment. Returns null if not yet computed.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_id` (path, integer, required) - A unique integer value identifying this experiment.
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/experiments/{experiment_id}/exposures/refresh/
+
+Manage experiments for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_id` (path, integer, required) - A unique integer value identifying this experiment.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/experiments/{experiment_id}/pause/
+
+Manage experiments for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_id` (path, integer, required) - A unique integer value identifying this experiment.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/experiments/{experiment_id}/results/
+
+(Beta) Retrieves statistical results for an experiment's metrics. Returns null if not yet computed.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_id` (path, integer, required) - A unique integer value identifying this experiment.
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/experiments/{experiment_id}/results/refresh/
+
+Manage experiments for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_id` (path, integer, required) - A unique integer value identifying this experiment.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### PATCH /api/v1/environments/{environment_api_key}/experiments/{experiment_id}/rollout/
+
+Sets an experiment's rollout: the percentage of eligible identities enrolled, the variant weights they are split across, and optionally the targeted audience. The audience can only be changed before the experiment starts serving traffic.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_id` (path, integer, required) - A unique integer value identifying this experiment.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/experiments/{experiment_id}/start/
+
+Manage experiments for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `experiment_id` (path, integer, required) - A unique integer value identifying this experiment.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/experiments/results/
+
+Get experiment results for a feature.
+
+Returns conversion rates and statistical significance for each variant
+of a feature flag experiment.
+
+Trait naming convention:
+- Variant tracking: `exp_{feature}_variant` (string value)
+- Conversion tracking: `exp_{feature}_converted` (boolean value)
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `feature` (query, string, required) - Feature name to analyse
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/features/{feature_pk}/create-segment-override/
+
+Creates a segment override for a feature in an environment in a single call, setting both the segment binding and its value. Applies to environments without v2 feature versioning (use_v2_feature_versioning: false).
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `feature_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/featurestates/
+
+View set to manage feature states. Nested beneath environments and environments + identities
+to allow for filtering on both.
+
+Parameters:
+- `anyIdentity` (query, string, optional) - Pass any value to get results that have an identity override. Do not pass for default behaviour.
+- `environment_api_key` (path, string, required)
+- `feature` (query, integer, optional) - ID of the feature to filter by.
+- `feature_name` (query, string, optional) - Name of the feature to filter by.
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/featurestates/
+
+DEPRECATED: please use `/features/featurestates/` instead.
+Override create method to add environment and identity (if present) from URL parameters.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/featurestates/{id}/
+
+View set to manage feature states. Nested beneath environments and environments + identities
+to allow for filtering on both.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature state.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/featurestates/{id}/
+
+Updates a feature state in an environment, including enabled status and value. Applies to environments without v2 feature versioning (use_v2_feature_versioning: false).
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature state.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/featurestates/{id}/
+
+View set to manage feature states. Nested beneath environments and environments + identities
+to allow for filtering on both.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature state.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/featurestates/{id}/
+
+Override partial_update as overridden update method assumes partial True for all requests.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature state.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/identities/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `page_size` (query, integer, optional) - Number of results to return per page.
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/identities/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/identities/{identity_pk}/featurestates/
+
+View set to manage feature states. Nested beneath environments and environments + identities
+to allow for filtering on both.
+
+Parameters:
+- `anyIdentity` (query, string, optional) - Pass any value to get results that have an identity override. Do not pass for default behaviour.
+- `environment_api_key` (path, string, required)
+- `feature` (query, integer, optional) - ID of the feature to filter by.
+- `feature_name` (query, string, optional) - Name of the feature to filter by.
+- `identity_pk` (path, integer, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/identities/{identity_pk}/featurestates/
+
+DEPRECATED: please use `/features/featurestates/` instead.
+Override create method to add environment and identity (if present) from URL parameters.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `identity_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/identities/{identity_pk}/featurestates/{id}/
+
+View set to manage feature states. Nested beneath environments and environments + identities
+to allow for filtering on both.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature state.
+- `identity_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/identities/{identity_pk}/featurestates/{id}/
+
+Override update method to always assume update request is partial and create / update
+feature state value.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature state.
+- `identity_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/identities/{identity_pk}/featurestates/{id}/
+
+View set to manage feature states. Nested beneath environments and environments + identities
+to allow for filtering on both.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature state.
+- `identity_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/identities/{identity_pk}/featurestates/{id}/
+
+Override partial_update as overridden update method assumes partial True for all requests.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature state.
+- `identity_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/identities/{identity_pk}/featurestates/all/
+
+View set to manage feature states. Nested beneath environments and environments + identities
+to allow for filtering on both.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `identity_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/identities/{identity_pk}/featurestates/clone-from-given-identity/
+
+Clone feature states from a given source identity.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `identity_pk` (path, integer, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/identities/{identity_pk}/traits/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `identity_pk` (path, integer, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/identities/{identity_pk}/traits/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `identity_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/identities/{identity_pk}/traits/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this trait.
+- `identity_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/identities/{identity_pk}/traits/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this trait.
+- `identity_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/identities/{identity_pk}/traits/{id}/
+
+Parameters:
+- `deleteAllMatchingTraits` (query, boolean, optional) - Deletes all traits in this environment matching the key of the deleted trait
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this trait.
+- `identity_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/identities/{identity_pk}/traits/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this trait.
+- `identity_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/identities/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this identity.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/identities/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this identity.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/identities/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this identity.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/identities/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this identity.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/amplitude/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/integrations/amplitude/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/amplitude/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this amplitude configuration.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/integrations/amplitude/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this amplitude configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/integrations/amplitude/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this amplitude configuration.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/integrations/amplitude/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this amplitude configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/dynatrace/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/integrations/dynatrace/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/dynatrace/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this dynatrace configuration.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/integrations/dynatrace/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this dynatrace configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/integrations/dynatrace/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this dynatrace configuration.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/integrations/dynatrace/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this dynatrace configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/grafana/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/integrations/grafana/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/grafana/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this grafana project configuration.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/integrations/grafana/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this grafana project configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/integrations/grafana/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this grafana project configuration.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/integrations/grafana/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this grafana project configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/heap/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/integrations/heap/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/heap/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this heap configuration.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/integrations/heap/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this heap configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/integrations/heap/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this heap configuration.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/integrations/heap/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this heap configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/mixpanel/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/integrations/mixpanel/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/mixpanel/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this mixpanel configuration.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/integrations/mixpanel/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this mixpanel configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/integrations/mixpanel/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this mixpanel configuration.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/integrations/mixpanel/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this mixpanel configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/rudderstack/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/integrations/rudderstack/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/rudderstack/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this rudderstack configuration.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/integrations/rudderstack/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this rudderstack configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/integrations/rudderstack/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this rudderstack configuration.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/integrations/rudderstack/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this rudderstack configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/segment/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/integrations/segment/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/segment/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this segment configuration.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/integrations/segment/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this segment configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/integrations/segment/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this segment configuration.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/integrations/segment/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this segment configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/sentry/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/integrations/sentry/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/sentry/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this sentry change tracking configuration.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/integrations/sentry/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this sentry change tracking configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/integrations/sentry/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this sentry change tracking configuration.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/integrations/sentry/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this sentry change tracking configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/slack/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/integrations/slack/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/slack-channels/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/slack/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this slack environment.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/integrations/slack/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this slack environment.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/integrations/slack/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this slack environment.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/integrations/slack/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this slack environment.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/slack/callback/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/slack/oauth/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/slack/signature/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/webhook/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/integrations/webhook/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/integrations/webhook/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this webhook configuration.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/integrations/webhook/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this webhook configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/integrations/webhook/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this webhook configuration.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/integrations/webhook/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this webhook configuration.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/list-change-requests/
+
+Retrieves all change requests for an environment.
+
+Parameters:
+- `committed` (query, boolean, optional) - Filter on the committed status of a change request.
+- `environment_api_key` (path, string, required)
+- `feature_id` (query, integer, optional) - Filter for a particular feature.
+- `live_from_after` (query, string, optional) - Filter change requests due to go live after this datetime.
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `page_size` (query, integer, optional) - Number of results to return per page.
+- `search` (query, string, optional) - Fuzzy search across Change Request titles.
+- `segment_id` (query, integer, optional) - Filter change requests which match a specific segment id.
+
+Responses:
+- 200
+- 400
+
+##### GET /api/v1/environments/{environment_api_key}/metrics/
+
+Get metrics for this environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/onboarding-status/
+
+Obtain information on whether features for this environment have been evaluated yet.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/user-group-permissions/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/user-group-permissions/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/user-group-permissions/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this user permission group environment permission.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/user-group-permissions/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this user permission group environment permission.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/user-group-permissions/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this user permission group environment permission.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/user-group-permissions/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this user permission group environment permission.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/user-permissions/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/user-permissions/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/user-permissions/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this user environment permission.
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/user-permissions/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this user environment permission.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/user-permissions/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this user environment permission.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/user-permissions/{id}/
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this user environment permission.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/warehouse-connections/
+
+Manage data warehouse connections for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/warehouse-connections/
+
+Manage data warehouse connections for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_api_key}/warehouse-connections/{connection_id}/
+
+Manage data warehouse connections for an environment.
+
+Parameters:
+- `connection_id` (path, integer, required) - A unique integer value identifying this warehouse connection.
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/{environment_api_key}/warehouse-connections/{connection_id}/
+
+Manage data warehouse connections for an environment.
+
+Parameters:
+- `connection_id` (path, integer, required) - A unique integer value identifying this warehouse connection.
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/warehouse-connections/{connection_id}/
+
+Manage data warehouse connections for an environment.
+
+Parameters:
+- `connection_id` (path, integer, required) - A unique integer value identifying this warehouse connection.
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/warehouse-connections/{connection_id}/
+
+Manage data warehouse connections for an environment.
+
+Parameters:
+- `connection_id` (path, integer, required) - A unique integer value identifying this warehouse connection.
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/warehouse-connections/{connection_id}/events/
+
+List the distinct event names in the connection's warehouse.
+
+Parameters:
+- `connection_id` (path, integer, required) - A unique integer value identifying this warehouse connection.
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+- 400
+- 503
+
+##### POST /api/v1/environments/{environment_api_key}/warehouse-connections/{connection_id}/test-warehouse-connection/
+
+Manage data warehouse connections for an environment.
+
+Parameters:
+- `connection_id` (path, integer, required) - A unique integer value identifying this warehouse connection.
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/warehouse-connections/test-warehouse-connection/
+
+Manage data warehouse connections for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_api_key}/webhooks/
+
+Manage webhooks for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_api_key}/webhooks/
+
+Manage webhooks for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### PUT /api/v1/environments/{environment_api_key}/webhooks/{id}/
+
+Manage webhooks for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this webhook.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_api_key}/webhooks/{id}/
+
+Manage webhooks for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this webhook.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_api_key}/webhooks/{id}/
+
+Manage webhooks for an environment.
+
+Parameters:
+- `environment_api_key` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this webhook.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_pk}/feature-lifecycle-counts/
+
+Retrieves the count of features in each lifecycle stage for the specified environment.
+
+Parameters:
+- `environment_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/{environment_pk}/features/{feature_pk}/versions/
+
+Retrieves version information for a feature flag in a specific environment. Applies to environments with v2 feature versioning (use_v2_feature_versioning: true).
+
+Parameters:
+- `environment_pk` (path, integer, required)
+- `feature_pk` (path, integer, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `page_size` (query, integer, optional) - Number of results to return per page.
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_pk}/features/{feature_pk}/versions/
+
+Creates a new version for a feature flag in a specific environment. Applies to environments with v2 feature versioning (use_v2_feature_versioning: true).
+
+Parameters:
+- `environment_pk` (path, integer, required)
+- `feature_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/environments/{environment_pk}/features/{feature_pk}/versions/{environment_feature_version_pk}/featurestates/
+
+Retrieves feature state information for a specific version in an environment. Applies to environments with v2 feature versioning (use_v2_feature_versioning: true).
+
+Parameters:
+- `environment_feature_version_pk` (path, string, required)
+- `environment_pk` (path, integer, required)
+- `feature_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/environments/{environment_pk}/features/{feature_pk}/versions/{environment_feature_version_pk}/featurestates/
+
+Creates a new feature state for a specific version in an environment. Applies to environments with v2 feature versioning (use_v2_feature_versioning: true).
+
+Parameters:
+- `environment_feature_version_pk` (path, string, required)
+- `environment_pk` (path, integer, required)
+- `feature_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### PUT /api/v1/environments/{environment_pk}/features/{feature_pk}/versions/{environment_feature_version_pk}/featurestates/{id}/
+
+Updates an existing feature state for a specific version in an environment. Applies to environments with v2 feature versioning (use_v2_feature_versioning: true).
+
+Parameters:
+- `environment_feature_version_pk` (path, string, required)
+- `environment_pk` (path, integer, required)
+- `feature_pk` (path, integer, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature state.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_pk}/features/{feature_pk}/versions/{environment_feature_version_pk}/featurestates/{id}/
+
+Parameters:
+- `environment_feature_version_pk` (path, string, required)
+- `environment_pk` (path, integer, required)
+- `feature_pk` (path, integer, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature state.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/environments/{environment_pk}/features/{feature_pk}/versions/{environment_feature_version_pk}/featurestates/{id}/
+
+Parameters:
+- `environment_feature_version_pk` (path, string, required)
+- `environment_pk` (path, integer, required)
+- `feature_pk` (path, integer, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature state.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/{environment_pk}/features/{feature_pk}/versions/{id}/
+
+Parameters:
+- `environment_pk` (path, integer, required)
+- `feature_pk` (path, integer, required)
+- `id` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### POST /api/v1/environments/{environment_pk}/features/{feature_pk}/versions/{id}/publish/
+
+Publishes a feature version to make it live in the environment. Applies to environments with v2 feature versioning (use_v2_feature_versioning: true).
+
+Parameters:
+- `environment_pk` (path, integer, required)
+- `feature_pk` (path, integer, required)
+- `id` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### PUT /api/v1/environments/environments/{environment_api_key}/edge-identities-featurestates
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/environments/environments/{environment_api_key}/edge-identities-featurestates
+
+Parameters:
+- `environment_api_key` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### GET /api/v1/environments/get-by-uuid/{uuid}/
+
+Parameters:
+- `uuid` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/environments/permissions/
+
+Parameters:
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/feature-health/{path}
+
+Parameters:
+- `path` (path, string, required)
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/features/create-feature-export/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/features/download-feature-export/{feature_export_id}/
+
+This endpoint is to download a feature export file from a specific environment
+
+Parameters:
+- `feature_export_id` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/features/download-flagsmith-on-flagsmith/
+
+This endpoint is to download a feature export to enable Flagsmith on Flagsmith
+
+Responses:
+- 200
+
+##### POST /api/v1/features/feature-import/{environment_id}
+
+Parameters:
+- `environment_id` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/features/feature-segments/
+
+Lists segment overrides for a feature in an environment.
+
+Parameters:
+- `environment` (query, integer, required)
+- `feature` (query, integer, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/features/feature-segments/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/features/feature-segments/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature segment.
+
+Responses:
+- 200
+
+##### PUT /api/v1/features/feature-segments/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature segment.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/features/feature-segments/{id}/
+
+Deletes a segment override. Applies to environments without v2 feature versioning (use_v2_feature_versioning: false).
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature segment.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/features/feature-segments/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature segment.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/features/feature-segments/get-by-uuid/{uuid}/
+
+Parameters:
+- `uuid` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/features/feature-segments/update-priorities/
+
+Parameters:
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/features/featurestates/
+
+Parameters:
+- `environment` (query, integer, required) - ID of the environment.
+- `feature` (query, integer, optional)
+- `feature_segment` (query, integer, optional)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/features/featurestates/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### PUT /api/v1/features/featurestates/{id}/
+
+Updates a feature state, including its enabled status and value. Also updates a segment override's value for environments without v2 feature versioning (use_v2_feature_versioning: false).
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature state.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### PATCH /api/v1/features/featurestates/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature state.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/features/featurestates/get-by-uuid/{uuid}/
+
+Parameters:
+- `uuid` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/features/get-by-uuid/{uuid}/
+
+Parameters:
+- `uuid` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/features/workflows/change-requests/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this change request.
+
+Responses:
+- 200
+
+##### PUT /api/v1/features/workflows/change-requests/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this change request.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/features/workflows/change-requests/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this change request.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/features/workflows/change-requests/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this change request.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/features/workflows/change-requests/{id}/approve/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this change request.
+
+Responses:
+- 200
+- 400
+- 403
+
+##### POST /api/v1/features/workflows/change-requests/{id}/commit/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this change request.
+
+Responses:
+- 200
+- 400
+- 403
+
+##### GET /api/v1/flags/
+
+Retrieve the feature flags for an environment.
+
+---
+*Note*: when providing the `feature` query argument, this endpoint will
+return either a single object or a 404 (if the feature does not exist) rather
+than a list.
+
+---
+*Note*: using this endpoint with an identifier is deprecated.
+Please use `/api/v1/identities/?identifier=<identifier>` instead.
+
+Parameters:
+- `feature` (query, string, optional) - Name of the feature to get the state of
+
+Responses:
+- 200
+
+##### GET /api/v1/flags/{feature_id}/multivariate-options/
+
+Parameters:
+- `feature_id` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/flags/{identifier}
+
+Retrieve the feature flags for an environment.
+
+---
+*Note*: when providing the `feature` query argument, this endpoint will
+return either a single object or a 404 (if the feature does not exist) rather
+than a list.
+
+---
+*Note*: using this endpoint with an identifier is deprecated.
+Please use `/api/v1/identities/?identifier=<identifier>` instead.
+
+Parameters:
+- `feature` (query, string, optional) - Name of the feature to get the state of
+- `identifier` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/github-webhook/
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/gitlab-webhook/{webhook_uuid}/
+
+Parameters:
+- `webhook_uuid` (path, string, required)
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/identities/
+
+Retrieve the flags and traits for an identity.
+
+Parameters:
+- `identifier` (query, string, required)
+- `transient` (query, boolean, optional)
+
+Responses:
+- 200
+
+##### POST /api/v1/identities/
+
+Identify a user, set their traits, and retrieve their flags.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/metadata/fields/
+
+Parameters:
+- `organisation` (query, integer, required) - Organisation ID to filter by
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `page_size` (query, integer, optional) - Number of results to return per page.
+
+Responses:
+- 200
+
+##### POST /api/v1/metadata/fields/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/metadata/fields/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this metadata field.
+
+Responses:
+- 200
+
+##### PUT /api/v1/metadata/fields/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this metadata field.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/metadata/fields/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this metadata field.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/metadata/fields/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this metadata field.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/multivariate/options/get-by-uuid/{uuid}/
+
+Parameters:
+- `uuid` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/oauth/authorize/
+
+Validate an authorisation request and return application info.
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/oauth/authorize/
+
+Process a consent decision and return the redirect URI.
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/onboarding/request/send/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 204: No response body
+- 400
+
+##### GET /api/v1/organisations/
+
+Lists all organisations accessible with the provided user API key.
+
+Parameters:
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/
+
+Override create method to add new organisation to authenticated user
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### PUT /api/v1/organisations/{organisation_id}/licence
+
+Parameters:
+- `organisation_id` (path, integer, required)
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/organisations/{organisation_pk}/api-usage-notification/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/audit/
+
+Parameters:
+- `environments` (query, array, optional)
+- `is_system_event` (query, boolean, optional)
+- `organisation_pk` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `page_size` (query, integer, optional) - Number of results to return per page.
+- `project` (query, integer, optional)
+- `search` (query, string, optional)
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/audit/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this audit log.
+- `organisation_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/github/create-cleanup-issue/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/organisations/{organisation_pk}/github/issues/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/organisations/{organisation_pk}/github/pulls/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/organisations/{organisation_pk}/github/repo-contributors/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/organisations/{organisation_pk}/github/repositories/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/organisations/{organisation_pk}/groups/
+
+Retrieves all permission groups within the organisation.
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/groups/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/groups/{group_pk}/roles/
+
+Parameters:
+- `group_pk` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/groups/{group_pk}/roles/{id}/
+
+Parameters:
+- `group_pk` (path, string, required)
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### POST /api/v1/organisations/{organisation_pk}/groups/{group_pk}/users/{user_pk}/make-admin
+
+Parameters:
+- `group_pk` (path, integer, required)
+- `organisation_pk` (path, integer, required)
+- `user_pk` (path, integer, required)
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/organisations/{organisation_pk}/groups/{group_pk}/users/{user_pk}/remove-admin
+
+Parameters:
+- `group_pk` (path, integer, required)
+- `organisation_pk` (path, integer, required)
+- `user_pk` (path, integer, required)
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/organisations/{organisation_pk}/groups/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user permission group.
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{organisation_pk}/groups/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user permission group.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/groups/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user permission group.
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/groups/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user permission group.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/groups/{id}/add-users/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user permission group.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/groups/{id}/remove-users/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user permission group.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/groups/my-groups/
+
+Returns a list of summary group objects only for the groups a user is a member of.
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/groups/summaries/
+
+Returns a list of summary group objects for all groups in the organisation.
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/integrations/github/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/integrations/github/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/integrations/github/{github_pk}/repositories/
+
+Parameters:
+- `github_pk` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/integrations/github/{github_pk}/repositories/
+
+Parameters:
+- `github_pk` (path, string, required)
+- `organisation_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/integrations/github/{github_pk}/repositories/{id}/
+
+Parameters:
+- `github_pk` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this git hub repository.
+- `organisation_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{organisation_pk}/integrations/github/{github_pk}/repositories/{id}/
+
+Parameters:
+- `github_pk` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this git hub repository.
+- `organisation_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/integrations/github/{github_pk}/repositories/{id}/
+
+Parameters:
+- `github_pk` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this git hub repository.
+- `organisation_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/integrations/github/{github_pk}/repositories/{id}/
+
+Parameters:
+- `github_pk` (path, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this git hub repository.
+- `organisation_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/integrations/github/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this github configuration.
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{organisation_pk}/integrations/github/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this github configuration.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/integrations/github/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this github configuration.
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/integrations/github/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this github configuration.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/integrations/grafana/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/integrations/grafana/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/integrations/grafana/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this grafana organisation configuration.
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{organisation_pk}/integrations/grafana/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this grafana organisation configuration.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/integrations/grafana/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this grafana organisation configuration.
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/integrations/grafana/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this grafana organisation configuration.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/invite-links/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/invite-links/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### DELETE /api/v1/organisations/{organisation_pk}/invite-links/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this invite link.
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### GET /api/v1/organisations/{organisation_pk}/invites/
+
+Retrieves all pending invitations for the organisation.
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/invites/
+
+Send an invitation to join the organisation with specified role and permissions.
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/invites/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this invite.
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/invites/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this invite.
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### POST /api/v1/organisations/{organisation_pk}/invites/{id}/resend/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this invite.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/master-api-keys/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/master-api-keys/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/master-api-keys/{api_key_prefix}/roles/
+
+Parameters:
+- `api_key_prefix` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/master-api-keys/{api_key_prefix}/roles/{id}/detach-roles-from-master-api-key/
+
+Parameters:
+- `api_key_prefix` (path, string, required)
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### GET /api/v1/organisations/{organisation_pk}/master-api-keys/{prefix}/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+- `prefix` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{organisation_pk}/master-api-keys/{prefix}/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+- `prefix` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/master-api-keys/{prefix}/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+- `prefix` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/master-api-keys/{prefix}/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+- `prefix` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/metadata-model-fields/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/metadata-model-fields/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/metadata-model-fields/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this metadata model field.
+- `organisation_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{organisation_pk}/metadata-model-fields/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this metadata model field.
+- `organisation_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/metadata-model-fields/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this metadata model field.
+- `organisation_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/metadata-model-fields/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this metadata model field.
+- `organisation_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/metadata-model-fields/supported-content-types/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/metadata-model-fields/supported-required-for-models/
+
+Parameters:
+- `model_name` (query, string, required)
+- `organisation_pk` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/roles/
+
+Retrieves all custom roles defined within the organisation.
+
+Parameters:
+- `organisation_pk` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/roles/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/roles/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{organisation_pk}/roles/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/roles/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/roles/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/roles/{role_pk}/environments-permissions/
+
+Parameters:
+- `environment` (query, integer, required) - ID of the environment to filter by.
+- `organisation_pk` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `role_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/roles/{role_pk}/environments-permissions/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/roles/{role_pk}/environments-permissions/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{organisation_pk}/roles/{role_pk}/environments-permissions/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/roles/{role_pk}/environments-permissions/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/roles/{role_pk}/environments-permissions/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/roles/{role_pk}/groups/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `role_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/roles/{role_pk}/groups/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/roles/{role_pk}/groups/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{organisation_pk}/roles/{role_pk}/groups/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/roles/{role_pk}/groups/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/roles/{role_pk}/groups/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/roles/{role_pk}/master-api-keys/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `role_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/roles/{role_pk}/master-api-keys/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/roles/{role_pk}/master-api-keys/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{organisation_pk}/roles/{role_pk}/master-api-keys/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/roles/{role_pk}/master-api-keys/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/roles/{role_pk}/master-api-keys/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/roles/{role_pk}/organisation-permissions/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `role_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/roles/{role_pk}/organisation-permissions/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/roles/{role_pk}/organisation-permissions/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{organisation_pk}/roles/{role_pk}/organisation-permissions/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/roles/{role_pk}/organisation-permissions/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/roles/{role_pk}/organisation-permissions/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/roles/{role_pk}/projects-permissions/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `project` (query, integer, required) - ID of the project to filter by.
+- `role_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/roles/{role_pk}/projects-permissions/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/roles/{role_pk}/projects-permissions/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{organisation_pk}/roles/{role_pk}/projects-permissions/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/roles/{role_pk}/projects-permissions/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/roles/{role_pk}/projects-permissions/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/roles/{role_pk}/users/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `role_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/roles/{role_pk}/users/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/roles/{role_pk}/users/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{organisation_pk}/roles/{role_pk}/users/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/roles/{role_pk}/users/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/roles/{role_pk}/users/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `role_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/scim/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/organisations/{organisation_pk}/scim/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200: No response body
+
+##### DELETE /api/v1/organisations/{organisation_pk}/scim/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### POST /api/v1/organisations/{organisation_pk}/scim/regenerate-token/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200: No response body
+
+##### GET /api/v1/organisations/{organisation_pk}/trust-relationships/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/trust-relationships/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/trust-relationships/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this trust relationship.
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{organisation_pk}/trust-relationships/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this trust relationship.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/trust-relationships/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this trust relationship.
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/trust-relationships/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this trust relationship.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/usage-data/
+
+Parameters:
+- `client_application_name` (query, string, optional)
+- `client_application_version` (query, string, optional)
+- `environment_id` (query, integer, optional)
+- `organisation_pk` (path, integer, required)
+- `period` (query, string, optional) - * `current_billing_period` - current_billing_period
+- `project_id` (query, integer, optional)
+- `user_agent` (query, string, optional)
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/usage-data/total-count/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/user-group-permissions/
+
+Parameters:
+- `group` (query, integer, optional)
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/user-group-permissions/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### PUT /api/v1/organisations/{organisation_pk}/user-group-permissions/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user permission group organisation permission.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/user-group-permissions/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user permission group organisation permission.
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/user-group-permissions/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user permission group organisation permission.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/user-permissions/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+- `user` (query, integer, optional)
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/user-permissions/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### PUT /api/v1/organisations/{organisation_pk}/user-permissions/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user organisation permission.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/user-permissions/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user organisation permission.
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/user-permissions/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user organisation permission.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/users/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/users/{id}/update-role/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this Feature flag admin user.
+- `organisation_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{organisation_pk}/users/{user_pk}/roles/
+
+Parameters:
+- `organisation_pk` (path, string, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `user_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/users/{user_pk}/roles/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `organisation_pk` (path, string, required)
+- `user_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### GET /api/v1/organisations/{organisation_pk}/webhooks/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{organisation_pk}/webhooks/
+
+Parameters:
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/organisations/{organisation_pk}/webhooks/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation webhook.
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{organisation_pk}/webhooks/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation webhook.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{organisation_pk}/webhooks/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation webhook.
+- `organisation_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{organisation_pk}/webhooks/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation webhook.
+- `organisation_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation.
+
+Responses:
+- 200
+
+##### PUT /api/v1/organisations/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/organisations/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/organisations/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{id}/get-hosted-page-url-for-subscription-upgrade/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{id}/get-subscription-metadata/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation.
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{id}/influx-data/
+
+Please use /api/v1/organisations/{organisation_pk}/usage-data/
+
+Parameters:
+- `environment_id` (query, integer, optional)
+- `id` (path, integer, required) - A unique integer value identifying this organisation.
+- `project_id` (query, integer, optional)
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{id}/invite/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{id}/my-permissions/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation.
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{id}/portal-url/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation.
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{id}/projects/
+
+Retrieves all projects within a specified organisation.
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation.
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{id}/remove-users/
+
+Takes a list of users and removes them from the organisation provided in the url
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/organisations/{id}/update-subscription/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{id}/usage/
+
+Please use /api/v1/organisations/{organisation_pk}/usage-data/total-count/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation.
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/{id}/user-detailed-permissions/{user_id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this organisation.
+- `user_id` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/get-by-uuid/{uuid}/
+
+Parameters:
+- `uuid` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/organisations/permissions/
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{id}/
+
+Retrieves comprehensive information about a specific project including configuration and statistics.
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this project.
+
+Responses:
+- 200
+
+##### PUT /api/v1/projects/{id}/
+
+Updates project configuration settings such as the project name and feature visibility.
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this project.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/projects/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this project.
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/projects/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this project.
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{id}/environments/
+
+Retrieves all environments configured for the specified project.
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this project.
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{id}/migrate-to-edge/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this project.
+
+Responses:
+- 202: No response body
+
+##### GET /api/v1/projects/{id}/my-permissions/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this project.
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{id}/user-detailed-permissions/{user_id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this project.
+- `user_id` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/all-user-permissions/{user_pk}/
+
+Parameters:
+- `project_pk` (path, integer, required)
+- `user_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/audit/
+
+Parameters:
+- `environments` (query, array, optional)
+- `is_system_event` (query, boolean, optional)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `page_size` (query, integer, optional) - Number of results to return per page.
+- `project` (query, integer, optional)
+- `project_pk` (path, integer, required)
+- `search` (query, string, optional)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/audit/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this audit log.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/change-requests/
+
+Retrieves all change requests for a project.
+
+Parameters:
+- `committed` (query, boolean, optional) - Filter on the committed status of a change request.
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `page_size` (query, integer, optional) - Number of results to return per page.
+- `project_pk` (path, string, required)
+- `search` (query, string, optional) - Fuzzy search across Change Request titles.
+- `segment_id` (query, integer, optional) - Filter change requests which match a specific segment id.
+
+Responses:
+- 200
+- 400
+
+##### POST /api/v1/projects/{project_pk}/change-requests/
+
+Parameters:
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/change-requests/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `project_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/projects/{project_pk}/change-requests/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/projects/{project_pk}/change-requests/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `project_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/projects/{project_pk}/change-requests/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/change-requests/{id}/approve/
+
+Parameters:
+- `id` (path, string, required)
+- `project_pk` (path, string, required)
+
+Responses:
+- 200
+- 400
+- 403
+
+##### POST /api/v1/projects/{project_pk}/change-requests/{id}/commit/
+
+Parameters:
+- `id` (path, string, required)
+- `project_pk` (path, string, required)
+
+Responses:
+- 200
+- 400
+- 403
+
+##### POST /api/v1/projects/{project_pk}/code-references/
+
+API view to create code references for a project
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/feature-exports/
+
+Parameters:
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/feature-health/events/
+
+Retrieves feature health monitoring events and metrics for the project.
+
+Parameters:
+- `project_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/feature-health/events/{id}/dismiss/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature health event.
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/feature-health/providers/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/feature-health/providers/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### DELETE /api/v1/projects/{project_pk}/feature-health/providers/{name}/
+
+Parameters:
+- `name` (path, string, required)
+- `project_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### GET /api/v1/projects/{project_pk}/feature-imports/
+
+Parameters:
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/features/
+
+Lists a project's feature flags (paginated). Pass `environment=<id>` to also get each feature's live state for that environment in `environment_feature_state`, along with override counts. Works for both v1 and v2 versioned environments.
+
+Parameters:
+- `environment` (query, integer, optional) - Integer ID of the environment to view features in the context of.
+- `group_owners` (query, string, optional) - Comma separated list of group owner ids to filter on
+- `identity` (query, string, optional) - ID of the identity to sort features with identity overrides first.
+- `is_archived` (query, boolean, optional)
+- `is_enabled` (query, boolean, optional) - Boolean value to filter features as enabled or disabled.
+- `lifecycle_stage` (query, string, optional) - Lifecycle stage to filter on. Requires `environment`.
+- `owners` (query, string, optional) - Comma separated list of owner ids to filter on
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `page_size` (query, integer, optional) - Number of results to return per page.
+- `project_pk` (path, integer, required)
+- `search` (query, string, optional)
+- `segment` (query, integer, optional) - Integer ID of the segment to retrieve segment overrides for.
+- `sort_direction` (query, string, optional) - * `ASC` - ASC
+- `sort_field` (query, string, optional) - * `created_date` - created_date
+- `tag_strategy` (query, string, optional) - * `UNION` - UNION
+- `tags` (query, string, optional) - Comma separated list of tag ids to filter on (AND with INTERSECTION, and OR with UNION via tag_strategy)
+- `type` (query, string, optional) - Feature type to filter on (STANDARD or MULTIVARIATE).
+- `value_search` (query, string, optional) - Value of type int, string, or boolean to filter features based on their values
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/features/
+
+Creates a new feature flag in the specified project with default settings.
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/features/{feature_pk}/code-references/
+
+Retrieves code references and usage information for the feature flag.
+
+Parameters:
+- `feature_pk` (path, integer, required)
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/features/{feature_pk}/feature-external-resources/
+
+Retrieves external resources linked to the feature flag.
+
+Parameters:
+- `feature_pk` (path, integer, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `project_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/features/{feature_pk}/feature-external-resources/
+
+Parameters:
+- `feature_pk` (path, integer, required)
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/features/{feature_pk}/feature-external-resources/{id}/
+
+Parameters:
+- `feature_pk` (path, integer, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature external resource.
+- `project_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/projects/{project_pk}/features/{feature_pk}/feature-external-resources/{id}/
+
+Parameters:
+- `feature_pk` (path, integer, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature external resource.
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/projects/{project_pk}/features/{feature_pk}/feature-external-resources/{id}/
+
+Parameters:
+- `feature_pk` (path, integer, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature external resource.
+- `project_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/projects/{project_pk}/features/{feature_pk}/feature-external-resources/{id}/
+
+Parameters:
+- `feature_pk` (path, integer, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature external resource.
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/features/{feature_pk}/mv-options/
+
+Retrieves all multivariate options for a feature flag.
+
+Parameters:
+- `feature_pk` (path, integer, required)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `project_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/features/{feature_pk}/mv-options/
+
+Creates a new multivariate option for a feature flag.
+
+Parameters:
+- `feature_pk` (path, integer, required)
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/features/{feature_pk}/mv-options/{id}/
+
+Parameters:
+- `feature_pk` (path, integer, required)
+- `id` (path, integer, required) - A unique integer value identifying this multivariate feature option.
+- `project_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/projects/{project_pk}/features/{feature_pk}/mv-options/{id}/
+
+Updates an existing multivariate option.
+
+Parameters:
+- `feature_pk` (path, integer, required)
+- `id` (path, integer, required) - A unique integer value identifying this multivariate feature option.
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/projects/{project_pk}/features/{feature_pk}/mv-options/{id}/
+
+Deletes a multivariate option.
+
+Parameters:
+- `feature_pk` (path, integer, required)
+- `id` (path, integer, required) - A unique integer value identifying this multivariate feature option.
+- `project_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/projects/{project_pk}/features/{feature_pk}/mv-options/{id}/
+
+Parameters:
+- `feature_pk` (path, integer, required)
+- `id` (path, integer, required) - A unique integer value identifying this multivariate feature option.
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/features/{id}/
+
+Retrieves detailed information about a specific feature flag.
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/projects/{project_pk}/features/{id}/
+
+Updates feature flag properties such as name and description.
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/projects/{project_pk}/features/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/projects/{project_pk}/features/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/features/{id}/add-group-owners/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/features/{id}/add-owners/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/features/{id}/evaluation-data/
+
+Retrieves evaluation data and analytics for a specific feature flag.
+
+Parameters:
+- `client_application_name` (query, string, optional)
+- `client_application_version` (query, string, optional)
+- `environment_id` (query, integer, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature.
+- `period` (query, integer, optional) - number of days
+- `project_pk` (path, integer, required)
+- `user_agent` (query, string, optional)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/features/{id}/influx-data/
+
+Please use ​/api​/v1​/projects​/{project_pk}​/features​/{id}​/evaluation-data/
+
+Parameters:
+- `aggregate_every` (query, string, optional)
+- `environment_id` (query, string, required)
+- `id` (path, integer, required) - A unique integer value identifying this feature.
+- `period` (query, string, optional)
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/features/{id}/remove-group-owners/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/features/{id}/remove-owners/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this feature.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/gitlab/issues/
+
+Parameters:
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/gitlab/merge-requests/
+
+Parameters:
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/gitlab/projects/
+
+Parameters:
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/imports/launch-darkly/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/imports/launch-darkly/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/imports/launch-darkly/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this launch darkly import request.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/integrations/datadog/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/integrations/datadog/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/integrations/datadog/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this data dog configuration.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/projects/{project_pk}/integrations/datadog/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this data dog configuration.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/projects/{project_pk}/integrations/datadog/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this data dog configuration.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/projects/{project_pk}/integrations/datadog/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this data dog configuration.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/integrations/gitlab/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/integrations/gitlab/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/integrations/gitlab/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this git lab configuration.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/projects/{project_pk}/integrations/gitlab/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this git lab configuration.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/projects/{project_pk}/integrations/gitlab/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this git lab configuration.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/projects/{project_pk}/integrations/gitlab/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this git lab configuration.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/integrations/grafana/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/integrations/grafana/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/integrations/grafana/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this grafana project configuration.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/projects/{project_pk}/integrations/grafana/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this grafana project configuration.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/projects/{project_pk}/integrations/grafana/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this grafana project configuration.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/projects/{project_pk}/integrations/grafana/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this grafana project configuration.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/integrations/new-relic/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/integrations/new-relic/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/integrations/new-relic/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this new relic configuration.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/projects/{project_pk}/integrations/new-relic/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this new relic configuration.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/projects/{project_pk}/integrations/new-relic/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this new relic configuration.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/projects/{project_pk}/integrations/new-relic/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this new relic configuration.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/metadata/fields/
+
+Parameters:
+- `entity` (query, string, optional) - Filter by entity type (feature, segment, or environment).
+- `include_organisation` (query, boolean, optional) - Include inherited organisation-level fields. Project-level fields override same-named org fields.
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `page_size` (query, integer, optional) - Number of results to return per page.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/metadata/fields/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this metadata field.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/release-pipelines/
+
+Retrieves all release pipelines configured for the specified project.
+
+Parameters:
+- `ordering` (query, string, optional) - Which field to use when ordering the results.
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `page_size` (query, integer, optional) - Number of results to return per page.
+- `project_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/release-pipelines/
+
+Parameters:
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/release-pipelines/{id}/
+
+Retrieves detailed information about a specific release pipeline.
+
+Parameters:
+- `id` (path, string, required)
+- `project_pk` (path, string, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/projects/{project_pk}/release-pipelines/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/projects/{project_pk}/release-pipelines/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `project_pk` (path, string, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/projects/{project_pk}/release-pipelines/{id}/
+
+Parameters:
+- `id` (path, string, required)
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/release-pipelines/{id}/add-feature/
+
+Adds a feature flag to a release pipeline for staged rollout.
+
+Parameters:
+- `id` (path, string, required)
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/release-pipelines/{id}/clone/
+
+Parameters:
+- `id` (path, string, required)
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/release-pipelines/{id}/publish-pipeline/
+
+Parameters:
+- `id` (path, string, required)
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/release-pipelines/{id}/remove-feature/
+
+Parameters:
+- `id` (path, string, required)
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/release-pipelines/{id}/unpublish-pipeline/
+
+Parameters:
+- `id` (path, string, required)
+- `project_pk` (path, string, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/segments/
+
+Retrieves all user segments defined for audience targeting within the project.
+
+Parameters:
+- `identity` (query, string, optional) - Optionally provide the id of an identity to get only the segments they match
+- `include_feature_specific` (query, boolean, optional)
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `page_size` (query, integer, optional) - Number of results to return per page.
+- `project_pk` (path, integer, required)
+- `q` (query, string, optional) - Search term to find segment with given term in their name
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/segments/
+
+Creates a new user segment for audience targeting within the project.
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/segments/{id}/
+
+Retrieves detailed information about a specific user segment.
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this segment.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/projects/{project_pk}/segments/{id}/
+
+Updates an existing user segment's properties and rules.
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this segment.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/projects/{project_pk}/segments/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this segment.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/projects/{project_pk}/segments/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this segment.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/segments/{id}/associated-features/
+
+Parameters:
+- `environment` (query, integer, optional)
+- `id` (path, integer, required) - A unique integer value identifying this segment.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/segments/{id}/clone/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this segment.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/segments/{id}/members/
+
+Parameters:
+- `cursor` (query, string, optional) - The identifier of the previous page's last row; omit for the first page.
+- `environment` (query, integer, required) - The id of the environment to list segment members for.
+- `id` (path, integer, required) - A unique integer value identifying this segment.
+- `limit` (query, integer, optional) - Page size, up to 200.
+- `project_pk` (path, integer, required)
+- `q` (query, string, optional) - Case-insensitive substring to filter members by identifier.
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/tags/
+
+Parameters:
+- `page` (query, integer, optional) - A page number within the paginated result set.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/tags/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/tags/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this tag.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/projects/{project_pk}/tags/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this tag.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/projects/{project_pk}/tags/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this tag.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/projects/{project_pk}/tags/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this tag.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/tags/get-by-uuid/{uuid}/
+
+Parameters:
+- `project_pk` (path, integer, required)
+- `uuid` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/user-group-permissions/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/user-group-permissions/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/user-group-permissions/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user project permission.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/projects/{project_pk}/user-group-permissions/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user project permission.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/projects/{project_pk}/user-group-permissions/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user project permission.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/projects/{project_pk}/user-group-permissions/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user project permission.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/{project_pk}/user-permissions/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/projects/{project_pk}/user-permissions/
+
+Parameters:
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### GET /api/v1/projects/{project_pk}/user-permissions/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user project permission.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 200
+
+##### PUT /api/v1/projects/{project_pk}/user-permissions/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user project permission.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### DELETE /api/v1/projects/{project_pk}/user-permissions/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user project permission.
+- `project_pk` (path, integer, required)
+
+Responses:
+- 204: No response body
+
+##### PATCH /api/v1/projects/{project_pk}/user-permissions/{id}/
+
+Parameters:
+- `id` (path, integer, required) - A unique integer value identifying this user project permission.
+- `project_pk` (path, integer, required)
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/get-by-uuid/{uuid}/
+
+Parameters:
+- `uuid` (path, string, required)
+
+Responses:
+- 200
+
+##### GET /api/v1/projects/permissions/
+
+Responses:
+- 200
+
+##### GET /api/v1/segments/get-by-uuid/{uuid}/
+
+Parameters:
+- `uuid` (path, string, required)
+
+Responses:
+- 200
+
+##### POST /api/v1/traits/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### PUT /api/v1/traits/bulk/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/traits/increment-value/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+
+##### POST /api/v1/users/join/{hash}/
+
+Parameters:
+- `hash` (path, string, required)
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/users/join/link/{hash}/
+
+Parameters:
+- `hash` (path, string, required)
+
+Responses:
+- 200: No response body
+
+##### POST /api/v1/webhooks/test/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 200
+- 400
+
+##### POST /api/v2/analytics/flags/
+
+Request body: application/json, application/x-www-form-urlencoded, multipart/form-data
+
+Responses:
+- 201
+
+##### POST /o/register/
+
+RFC 7591 Dynamic Client Registration endpoint.
+
+Responses:
+- 200: No response body
+
+##### GET /processor/monitoring/
+
+Responses:
+- 200
+
+#### Models
+
+- ActionEnum: * `members` - members
+* `add_members` - add_members
+* `remove_members` - remove_members
+- ActionTypeEnum: * `TOGGLE_FEATURE` - Enable/Disable Feature for the environment
+* `UPDATE_FEATURE_VALUE` - Update Feature Value for the environment
+* `TOGGLE_FEATURE_FOR_SEGMENT` - Enable/Disable Feature for a specific segment
+* `UPDATE_FEATURE_VALUE_FOR_SEGMENT` - Update Feature Value for a specific segment
+* `PHASED_ROLLOUT` - Create Phased Rollout
+- Activation
+- AggregationEnum: * `count` - Count
+* `sum` - Sum
+* `mean` - Mean
+* `occurrence` - Occurrence (event happened at least once)
+- AmplitudeConfiguration
+- AmplitudeList
+- AmplitudeListResponse
+- AmplitudeListResponseEnvelope
+- AuditLogList
+- AuditLogRetrieve
+- BaseEdgeIdentityFeatureState
+- BaseUrlEnum: * `https://api.segment.io/` - https://api.segment.io/
+* `https://events.eu1.segmentapis.com/` - https://events.eu1.segmentapis.com/
+- BillingStatusEnum: * `ACTIVE` - Active
+* `DUNNING` - Dunning
+- BlankEnum
+- ChangeRequestApproval: Adds nested create feature
+- ChangeRequestCreate: Adds nested create feature
+- ChangeRequestGroupAssignment: Adds nested create feature
+- ChangeRequestList
+- ChangeRequestRetrieve
+- ChangeRequestSegment: Functionality for serializers that need to handle metadata
+- ChangeRequestUpdate: Adds nested create feature
+- ChangeTypeEnum
+- ClaimRule
+- CloneEnvironment
+- CloneSegment
+- Cohort
+- CohortCsvSync
+- CohortCsvSyncIgnoredRows
+- CohortCsvSyncResult
+- CohortMembershipCounts
+- CohortSyncKey
+- CohortSyncMembers
+- Condition
+- ConditionOperatorEnum: * `EQUAL` - Exactly Matches
+* `GREATER_THAN` - Greater than
+* `LESS_THAN` - Less than
+* `CONTAINS` - Contains
+* `GREATER_THAN_INCLUSIVE` - Greater than or equal to
+* `LESS_THAN_INCLUSIVE` - Less than or equal to
+* `NOT_CONTAINS` - Does not contain
+* `NOT_EQUAL` - Does not match
+* `REGEX` - Matches regex
+* `PERCENTAGE_SPLIT` - Percentage split
+* `MODULO` - Modulo Operation
+* `IS_SET` - Is set
+* `IS_NOT_SET` - Is not set
+* `IN` - In
+- Conflict
+- ContentType
+- CreateChangeRequestFeatureState: Adds nested create feature
+- CreateEnvironment: Mixin to add read only status to fields in a given serializer based on the existence
+of a subscription and a black list of plan ids
+
+Example usage:
+
+    class MySerializer(ReadOnlyIfNotValidPlanMixin, ModelSerializer):
+        class Meta:
+            model = MyModel
+            fields = ("my_field",)
+
+        invalid_plans = ("free",)
+        field_names = ("my_field",)
+
+        def get_subscription(self):
+            return subscription
+- CreateFeature: Adds nested create feature
+- CreateFeatureExport
+- CreateFeatureHealthProvider
+- CreateLaunchDarklyImportRequest
+- CreateUpdateUserEnvironmentPermission
+- CreateUpdateUserPermissionGroupEnvironmentPermission
+- CreateUpdateUserPermissionGroupProjectPermission
+- CreateUpdateUserProjectPermission
+- CustomCreateSegmentOverrideFeatureSegment
+- CustomCreateSegmentOverrideFeatureState: Adds nested create feature
+- CustomEnvironmentFeatureVersionFeatureState: Adds nested create feature
+- CustomUserCreate
+- DataDogConfiguration
+- DeleteAllTraitKeys
+- DeleteSegmentOverride
+- DerivedFrom
+- DetailedPermissions
+- DirectionEnum: * `up` - Higher is better
+* `down` - Lower is better
+* `informational` - Informational only
+- DjangoAttributeNameEnum: * `email` - Email
+* `first_name` - First / Given name
+* `last_name` - Last name / Surname
+* `groups` - Groups
+- DynatraceConfiguration
+- EdgeIdentity
+- EdgeIdentityFeatureState
+- EdgeIdentitySourceIdentityRequest
+- EdgeIdentityTraits
+- EdgeIdentityUpdate
+- EdgeIdentityWithIdentifierFeatureStateRequestBody
+- EdgeMultivariateFeatureStateValue
+- EdgeV2MigrationStatusEnum: * `NOT_STARTED` - Not Started
+* `IN_PROGRESS` - In Progress
+* `COMPLETE` - Complete
+* `INCOMPLETE` - Incomplete (identity overrides skipped)
+- EnvironmentAPIKey
+- EnvironmentDefault
+- EnvironmentFeatureVersion
+- EnvironmentFeatureVersionChangeRequest
+- EnvironmentFeatureVersionCreate
+- EnvironmentFeatureVersionPublish
+- EnvironmentFeatureVersionRetrieve
+- EnvironmentMetrics
+- EnvironmentOnboardingStatus
+- EnvironmentRetrieveSerializerWithMetadata: Functionality for serializers that need to handle metadata
+- EnvironmentSerializerLight
+- EnvironmentSerializerWithMetadata: Functionality for serializers that need to handle metadata
+- Error
+- ExpectedDirectionEnum: * `increase` - Increase
+* `decrease` - Decrease
+* `not_increase` - Should not increase
+* `not_decrease` - Should not decrease
+- Experiment
+- ExperimentAudience
+- ExperimentDetail
+- ExperimentFeature
+- ExperimentList
+- ExperimentMetric
+- ExperimentMetricInline
+- ExperimentResults: Serializer for the full experiment results response.
+- ExperimentRollout
+- ExperimentStatistics: Serializer for statistical analysis results.
+- ExperimentVariantResult: Serializer for individual variant results.
+- FeatureEvaluationData
+- FeatureExport
+- FeatureExternalResource
+- FeatureExternalResourceTypeEnum: * `GITHUB_ISSUE` - GitHub Issue
+* `GITHUB_PR` - GitHub PR
+* `GITLAB_ISSUE` - GitLab Issue
+* `GITLAB_MR` - GitLab MR
+- FeatureFlagCodeReferencesRepositoryCount
+- FeatureFlagCodeReferencesRepositorySummary
+- FeatureFlagCodeReferencesScan
+- FeatureGroupOwnerInput
+- FeatureHealthEvent
+- FeatureHealthEventReason
+- FeatureHealthEventReasonTextBlock
+- FeatureHealthEventReasonUrlBlock
+- FeatureHealthEventTypeEnum: * `UNHEALTHY` - Unhealthy
+* `HEALTHY` - Healthy
+- FeatureHealthProvider
+- FeatureIdentifier
+- FeatureImport
+- FeatureImportStrategyEnum: * `SKIP` - Skip
+* `OVERWRITE_DESTRUCTIVE` - Overwrite Destructive
+- FeatureImportUpload
+- FeatureImportUploadStrategyEnum: * `SKIP` - SKIP
+* `OVERWRITE_DESTRUCTIVE` - OVERWRITE_DESTRUCTIVE
+- FeatureInfluxData
+- FeatureLifecycleCounts: Number of features in each lifecycle stage for an environment
+- FeatureMVOptionsValuesResponse
+- FeatureOwnerInput
+- FeatureSegmentChangePriorities
+- FeatureSegmentCreate
+- FeatureSegmentList
+- FeatureStateSerializerBasic: Adds nested create feature
+- FeatureStateSerializerCreate
+- FeatureStateSerializerSmall
+- FeatureStateSerializerWithIdentity: Adds nested create feature
+- FeatureStateValue
+- FeatureUpdateSegmentData
+- FeatureValue
+- FeatureValueTypeEnum: * `integer` - integer
+* `string` - string
+* `boolean` - boolean
+- GetEdgeIdentityOverrides
+- GetEdgeIdentityOverridesResult
+- GetHostedPageForSubscriptionUpgrade
+- GitLabConfiguration
+- GithubConfiguration
+- GithubLogin
+- GithubRepository
+- GoogleLogin
+- GrafanaOrganisationConfiguration
+- GrafanaProjectConfiguration
+- Group
+- GroupRole
+- HeapConfiguration
+- IdentifierOnlyIdentity
+- Identity
+- IdentityAllFeatureStates
+- IdentityAllFeatureStatesFeature
+- IdentityAllFeatureStatesMVFeatureOption
+- IdentityAllFeatureStatesMVFeatureStateValue
+- IdentityAllFeatureStatesSegment
+- IdentitySourceIdentityRequest
+- IncrementTraitValue
+- InfluxData
+- Invite
+- InviteLink
+- InviteList
+- Labels
+- LaunchDarklyImportRequest
+- LaunchDarklyImportRequestStatus
+- LifecycleStageEnum: * `new` - new
+* `live` - live
+* `stale` - stale
+* `permanent` - permanent
+* `needs_monitoring` - needs_monitoring
+* `to_remove` - to_remove
+- ListFeature: Functionality for serializers that need to handle metadata
+- ListUserEnvironmentPermission
+- ListUserPermissionGroup
+- ListUserPermissionGroupEnvironmentPermission
+- ListUserPermissionGroupMembership
+- ListUserPermissionGroupProjectPermission
+- ListUserProjectPermission
+- ManagedByEnum: * `` - Unmanaged
+* `cohort` - Cohort
+- MasterAPIKey
+- MasterAPIKeyRole
+- MatchEnum: * `any` - Any
+* `all` - All
+- MetaDataModelField: Adds nested create feature
+- Metadata
+- MetadataField
+- MetadataFieldTypeEnum: * `int` - Integer
+* `str` - String
+* `bool` - Boolean
+* `url` - Url
+* `multiline_str` - Multiline String
+- MetadataModelFieldNested
+- MetadataModelFieldRequirement
+- Metric
+- MetricItem
+- MixpanelConfiguration
+- MixpanelMember
+- MixpanelParameters
+- MixpanelWebhook
+- MixpanelWebhookError
+- MixpanelWebhookFailureResponse
+- MixpanelWebhookResponse
+- Monitoring
+- MultiInvites
+- MultivariateFeatureOption
+- MultivariateFeatureStateValue
+- MultivariateOptionValues
+- MultivariateValue
+- NameEnum: * `Webhook` - Webhook
+* `Grafana` - Grafana
+- NestedMultivariateFeatureOption
+- NewRelicConfiguration
+- NullEnum
+- OAuthToken
+- OrganisationAPIUsageNotification
+- OrganisationSerializerBasic
+- OrganisationSerializerFull
+- OrganisationWebhook
+- PaginatedAuditLogListList
+- PaginatedContentTypeList
+- PaginatedEdgeIdentityList
+- PaginatedEdgeIdentityTraitsList
+- PaginatedEnvironmentFeatureVersionList
+- PaginatedEnvironmentMetricsList
+- PaginatedEnvironmentSerializerWithMetadataList
+- PaginatedExperimentListList
+- PaginatedFeatureExportList
+- PaginatedFeatureExternalResourceList
+- PaginatedFeatureImportList
+- PaginatedFeatureSegmentListList
+- PaginatedFeatureStateSerializerWithIdentityList
+- PaginatedGithubConfigurationList
+- PaginatedGithubRepositoryList
+- PaginatedGroupRoleList
+- PaginatedIdentityAllFeatureStatesList
+- PaginatedIdentityList
+- PaginatedInviteListList
+- PaginatedListFeatureList
+- PaginatedListUserPermissionGroupList
+- PaginatedMasterAPIKeyList
+- PaginatedMasterAPIKeyRoleList
+- PaginatedMetaDataModelFieldList
+- PaginatedMetadataFieldList
+- PaginatedMetricList
+- PaginatedMultivariateFeatureOptionList
+- PaginatedOrganisationAPIUsageNotificationList
+- PaginatedOrganisationSerializerFullList
+- PaginatedOrganisationWebhookList
+- PaginatedPaginatedQueryParamsList
+- PaginatedPermissionModelList
+- PaginatedProjectChangeRequestListList
+- PaginatedQueryParams
+- PaginatedReleasePipelineList
+- PaginatedRoleEnvironmentPermissionList
+- PaginatedRoleList
+- PaginatedRoleOrganisationPermisssionList
+- PaginatedRoleProjectPermissionList
+- PaginatedSamlAttributeMappingList
+- PaginatedSamlConfigurationList
+- PaginatedSearchQueryParamsList
+- PaginatedSegmentList
+- PaginatedTagList
+- PaginatedTraitList
+- PaginatedTrustRelationshipList
+- PaginatedUserList
+- PaginatedUserRoleList
+- PaginatedWritableNestedFeatureStateList
+- PasswordResetConfirmRetype
+- PatchedAmplitudeConfiguration
+- PatchedChangeRequestUpdate: Adds nested create feature
+- PatchedCohort
+- PatchedCreateUpdateUserEnvironmentPermission
+- PatchedCreateUpdateUserPermissionGroupEnvironmentPermission
+- PatchedCreateUpdateUserPermissionGroupProjectPermission
+- PatchedCreateUpdateUserProjectPermission
+- PatchedCustomEnvironmentFeatureVersionFeatureState: Adds nested create feature
+- PatchedDataDogConfiguration
+- PatchedDynatraceConfiguration
+- PatchedEdgeIdentityUpdate
+- PatchedEnvironmentAPIKey
+- PatchedExperiment
+- PatchedExperimentMetric
+- PatchedExperimentRollout
+- PatchedFeatureExternalResource
+- PatchedFeatureSegmentCreate
+- PatchedFeatureStateSerializerCreate
+- PatchedGitLabConfiguration
+- PatchedGithubConfiguration
+- PatchedGithubRepository
+- PatchedGrafanaOrganisationConfiguration
+- PatchedGrafanaProjectConfiguration
+- PatchedGroupRole
+- PatchedHeapConfiguration
+- PatchedIdentity
+- PatchedListUserPermissionGroup
+- PatchedMasterAPIKey
+- PatchedMasterAPIKeyRole
+- PatchedMetaDataModelField: Adds nested create feature
+- PatchedMetadataField
+- PatchedMetric
+- PatchedMixpanelConfiguration
+- PatchedMultivariateFeatureOption
+- PatchedNewRelicConfiguration
+- PatchedOrganisationSerializerFull
+- PatchedOrganisationWebhook
+- PatchedProjectChangeRequest: Adds nested create feature
+- PatchedProjectUpdate: Mixin to add read only status to fields in a given serializer based on the existence
+of a subscription and a black list of plan ids
+
+Example usage:
+
+    class MySerializer(ReadOnlyIfNotValidPlanMixin, ModelSerializer):
+        class Meta:
+            model = MyModel
+            fields = ("my_field",)
+
+        invalid_plans = ("free",)
+        field_names = ("my_field",)
+
+        def get_subscription(self):
+            return subscription
+- PatchedReleasePipeline
+- PatchedRole
+- PatchedRoleEnvironmentPermission
+- PatchedRoleOrganisationPermisssion
+- PatchedRoleProjectPermission
+- PatchedRudderstackConfiguration
+- PatchedSamlAttributeMapping
+- PatchedSamlConfiguration
+- PatchedSamlCurrentUser
+- PatchedSegment: Functionality for serializers that need to handle metadata
+- PatchedSegmentConfiguration
+- PatchedSentryChangeTrackingConfiguration
+- PatchedSlackEnvironment
+- PatchedTag
+- PatchedTrait
+- PatchedTrustRelationship
+- PatchedUpdateEnvironment: Mixin to add read only status to fields in a given serializer based on the existence
+of a subscription and a black list of plan ids
+
+Example usage:
+
+    class MySerializer(ReadOnlyIfNotValidPlanMixin, ModelSerializer):
+        class Meta:
+            model = MyModel
+            fields = ("my_field",)
+
+        invalid_plans = ("free",)
+        field_names = ("my_field",)
+
+        def get_subscription(self):
+            return subscription
+- PatchedUpdateFeature: prevent users from changing certain values after creation
+- PatchedUpdateFlagRequest
+- PatchedUser
+- PatchedUserOrganisationPermissionUpdateCreate
+- PatchedUserPermissionGroupOrganisationPermissionUpdateCreate
+- PatchedUserRole
+- PatchedWarehouseConnection
+- PatchedWebhook
+- PatchedWebhookConfiguration
+- PatchedWritableNestedFeatureState: Adds nested create feature
+- PaymentMethodEnum: * `CHARGEBEE` - Chargebee
+* `XERO` - Xero
+* `AWS_MARKETPLACE` - AWS Marketplace
+- PaymentSourceEnum: * `CHARGEBEE` - CHARGEBEE
+- PermissionModel
+- PermissionRole
+- PermissionsTagBasedPermission
+- PipelineStage: Adds nested create feature
+- PortalUrl
+- ProjectChangeRequest: Adds nested create feature
+- ProjectChangeRequestList
+- ProjectChangeRequestRetrieve
+- ProjectCreate: Mixin to add read only status to fields in a given serializer based on the existence
+of a subscription and a black list of plan ids
+
+Example usage:
+
+    class MySerializer(ReadOnlyIfNotValidPlanMixin, ModelSerializer):
+        class Meta:
+            model = MyModel
+            fields = ("my_field",)
+
+        invalid_plans = ("free",)
+        field_names = ("my_field",)
+
+        def get_subscription(self):
+            return subscription
+- ProjectFeature
+- ProjectList
+- ProjectRetrieve
+- ProjectUpdate: Mixin to add read only status to fields in a given serializer based on the existence
+of a subscription and a black list of plan ids
+
+Example usage:
+
+    class MySerializer(ReadOnlyIfNotValidPlanMixin, ModelSerializer):
+        class Meta:
+            model = MyModel
+            fields = ("my_field",)
+
+        invalid_plans = ("free",)
+        field_names = ("my_field",)
+
+        def get_subscription(self):
+            return subscription
+- ReleasePipeline
+- ReleasePipelineDetail: Adds nested create feature
+- ResultEnum: * `success` - success
+* `failure` - failure
+* `incomplete` - incomplete
+- Role
+- RoleEnum: * `ADMIN` - Admin
+* `USER` - User
+- RoleEnvironmentPermission
+- RoleOrganisationPermisssion
+- RoleProjectPermission
+- RudderstackConfiguration
+- SDKAnalyticsFlags
+- SDKAnalyticsFlagsSerializerDetail
+- SDKBulkCreateUpdateTrait
+- SDKCreateUpdateTrait
+- SamlAttributeMapping
+- SamlConfiguration
+- SamlCurrentUser
+- SamlLogin
+- SamlRequest
+- SamlRequestHeaders
+- SamlUserToken
+- Scope
+- SearchQueryParams
+- Segment: Functionality for serializers that need to handle metadata
+- SegmentAssociatedFeatureState
+- SegmentConfiguration
+- SegmentIdentifier
+- SegmentMember
+- SegmentMembersResponse
+- SegmentMembershipCount
+- SegmentOverride
+- SegmentRule: Adds nested create feature
+- SegmentRuleTypeEnum: * `ALL` - all
+* `ANY` - any
+* `NONE` - none
+- SelfHostedOnboardingSupportSendRequest
+- SendEmailReset
+- SentryChangeTrackingConfiguration
+- SetPasswordRetype
+- SetUsername
+- SignUpTypeEnum: * `NO_INVITE` - No Invite
+* `INVITE_EMAIL` - Invite Email
+* `INVITE_LINK` - Invite Link
+- SlackChannel
+- SlackChannelList
+- SlackEnvironment
+- SourceTypeEnum: * `csv` - CSV
+* `amplitude` - Amplitude
+* `mixpanel` - Mixpanel
+- StageAction
+- StageTrigger
+- Status6d4Enum: * `SUCCESS` - Success
+* `PROCESSING` - Processing
+* `FAILED` - Failed
+- Status7a8Enum: * `created` - Created
+* `running` - Running
+* `paused` - Paused
+* `completed` - Completed
+- Subscription
+- SubscriptionDetails
+- Tag
+- TagBasedPermission
+- TagTypeEnum: * `NONE` - None
+* `STALE` - Stale
+* `GITHUB` - Github
+* `UNHEALTHY` - Unhealthy
+* `GITLAB` - Gitlab
+- Telemetry
+- TestWebhook
+- TestWebhookErrorResponse
+- TestWebhookSuccessResponse
+- TokenCreate
+- TokenExchangeRequest
+- TokenExchangeResponse
+- Trait
+- TraitKeys
+- TriggerTypeEnum: * `ON_ENTER` - Trigger when flag enters stage
+* `WAIT_FOR` - Trigger after waiting for x amount of time
+- TrustRelationship
+- Type68aEnum
+- Type975Enum: * `int` - Integer
+* `unicode` - String
+* `bool` - Boolean
+- TypeD77Enum: * `STANDARD` - STANDARD
+* `MULTIVARIATE` - MULTIVARIATE
+- UTMData
+- UpdateChangeRequestFeatureState: Adds nested create feature
+- UpdateEnvironment: Mixin to add read only status to fields in a given serializer based on the existence
+of a subscription and a black list of plan ids
+
+Example usage:
+
+    class MySerializer(ReadOnlyIfNotValidPlanMixin, ModelSerializer):
+        class Meta:
+            model = MyModel
+            fields = ("my_field",)
+
+        invalid_plans = ("free",)
+        field_names = ("my_field",)
+
+        def get_subscription(self):
+            return subscription
+- UpdateFeature: prevent users from changing certain values after creation
+- UpdateFlag
+- UpdateFlagRequest
+- UpdateFlagRequestEnvironmentDefaultRequest
+- UpdateFlagRequestFlagValue
+- UpdateFlagRequestSegmentOverrideRequest
+- UpdateFlagRequestSegmentReference
+- UpdateFlagRequestVariant
+- UpdateFlagResponse
+- UpdateFlagResponseEnvironmentDefaultResponse
+- UpdateFlagResponseFlagValue
+- UpdateFlagResponseSegmentOverrideResponse
+- UpdateFlagResponseSegmentReference
+- UpdateFlagResponseVariant
+- UpdateFlagV2
+- UpdateSubscription
+- UsageData
+- UsageTotalCount
+- User
+- UserDetailedPermissions
+- UserId
+- UserIds
+- UserList
+- UserObjectPermissions
+- UserOrganisation
+- UserOrganisationPermissionList
+- UserOrganisationPermissionUpdateCreate
+- UserPermissionGroup
+- UserPermissionGroupMembership
+- UserPermissionGroupOrganisationPermissionList
+- UserPermissionGroupOrganisationPermissionUpdateCreate
+- UserPermissionGroupSerializerDetail
+- UserPermissionGroupSummary
+- UserRole
+- UsernameResetConfirm
+- V1EnvironmentDocumentResponse: `/api/v1/environment-documents/` response.
+
+Powers Flagsmith SDK's local evaluation mode.
+- V1EnvironmentDocumentResponseFeature: Represents a Flagsmith feature, defined at project level.
+- V1EnvironmentDocumentResponseFeatureSegment: Represents data specific to a segment feature override.
+- V1EnvironmentDocumentResponseFeatureState: Used to define the state of a feature for an environment, segment overrides, and identity overrides.
+- V1EnvironmentDocumentResponseIdentityOverride: Represents an identity override, defining feature states specific to an identity.
+- V1EnvironmentDocumentResponseMultivariateFeatureOption: Represents a single multivariate feature option in the Flagsmith UI.
+- V1EnvironmentDocumentResponseMultivariateFeatureStateValue: Represents a multivariate feature state value.
+- V1EnvironmentDocumentResponseProject: Represents a Flagsmith project. For SDKs, this is mainly used to convey segment data.
+- V1EnvironmentDocumentResponseSegment: Represents a Flagsmith segment. Carries rules and feature overrides.
+- V1EnvironmentDocumentResponseSegmentCondition: Represents a condition within a segment rule used by Flagsmith engine.
+- V1EnvironmentDocumentResponseSegmentConditionOperatorEnum
+- V1EnvironmentDocumentResponseSegmentRule: Represents a rule within a segment used by Flagsmith engine. Root rules usually contain nested rules.
+- V1EnvironmentDocumentResponseSegmentRuleTypeEnum
+- V1IdentitiesRequest: `/api/v1/identities/` request.
+
+Used to retrieve flags for an identity and store its traits.
+- V1IdentitiesRequestTraitInput: Represents a key-value pair trait provided as input when creating or updating an identity.
+- V1IdentitiesResponse: `/api/v1/identities/` response.
+
+Represents the identity created or updated, along with its flags.
+- V1IdentitiesResponseFeature: Represents a Flagsmith feature, defined at project level.
+- V1IdentitiesResponseTrait: Represents a key-value pair associated with an identity.
+- V1IdentitiesResponseV1Flag: Represents a single flag (feature state) returned by the Flagsmith SDK.
+- ValueTypeEnum: * `int` - Integer
+* `unicode` - String
+* `bool` - Boolean
+* `float` - Float
+- VcsProviderEnum: * `github` - GitHub
+- VersionChangeSet: Adds nested create feature
+- WarehouseConnection
+- WarehouseConnectionStatusEnum: * `created` - Created
+* `pending_connection` - Pending Connection
+* `connected` - Connected
+* `errored` - Errored
+- WarehouseConnectionTestResult
+- WarehouseEventNamesResult
+- WarehouseEventNamesUnavailable
+- WarehouseEventNamesUnsupported
+- WarehouseTypeEnum: * `flagsmith` - Flagsmith
+* `snowflake` - Snowflake
+* `clickhouse` - ClickHouse
+- Webhook
+- WebhookConfiguration
+- WebhookScopeTypeEnum: * `organisation` - organisation
+* `environment` - environment
+- WebhookSyncMembers
+- WorkflowsError
+- WritableNestedFeatureState: Adds nested create feature
+- _CodeReferenceDetail
+- _CodeReferenceSubmit
+- _FeatureStateValue
+- _Identity
+- _MultivariateFeatureStateValue
+- _NestedSegmentRule: Adds nested create feature
+- _SegmentCohort

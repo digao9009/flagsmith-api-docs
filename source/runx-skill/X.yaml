@@ -1,0 +1,80 @@
+skill: flagsmith-sourcey-docs
+version: "0.3.0"
+
+catalog:
+  kind: skill
+  audience: public
+  visibility: public
+  role: canonical
+
+harness:
+  cases:
+    - name: flagsmith-docs-validate
+      runner: default
+      operator_journeys:
+        - mode: standalone
+          confusors: [extract, web-fetch]
+          request: Validate the generated Flagsmith API documentation site in the supplied project directory and emit the recomputable JSON verification report.
+          expected_outcome: The default runner verifies index.html exists, returns the generated file list, page count, spec/critical file hashes, and search-index status in a sealed receipt.
+        - mode: composed
+          request: Reuse the verification report produced by the prior step instead of re-validating the site.
+          expected_outcome: Downstream steps reference the sealed verification report without re-running the validation.
+          prior_evidence:
+            - The sealed verification report from the standalone run (generated_files, spec_sha256, index_sha256).
+          must_not_repeat:
+            - Do not re-hash or re-validate the site when the sealed verification report already covers the revision.
+      inputs:
+        project: C:/Users/digao/frantic-33/site
+        spec_commit: 9fe3c5c44ea47b2db719bdcf64eb149020721779
+      expect:
+        status: sealed
+        receipt:
+          schema: runx.receipt.v1
+          state: sealed
+          disposition: closed
+          reason_code: process_closed
+
+runners:
+  default:
+    default: true
+    type: cli-tool
+    command: python
+    args:
+      - run.py
+    timeout_seconds: 600
+    artifacts:
+      named_emits:
+        report: report
+    inputs:
+      project:
+        type: string
+        required: true
+        description: Project directory containing sourcey.config.ts, node_modules/sourcey, and the OpenAPI spec.
+      output_dir:
+        type: string
+        required: false
+        description: Build output directory relative to the project (default dist).
+      spec:
+        type: string
+        required: false
+        description: OpenAPI spec path relative to the project (default flagsmith-openapi.yaml).
+      spec_commit:
+        type: string
+        required: false
+        description: Pinned upstream commit the spec was taken from (recorded in the report).
+      runx_version:
+        type: string
+        required: false
+        description: Exact `runx --version` output captured on the host.
+      sourcey_version:
+        type: string
+        required: false
+        description: Sourcey CLI version used for the build.
+      build_command:
+        type: string
+        required: false
+        description: The exact build command executed on the host.
+      build_log:
+        type: string
+        required: false
+        description: Path to the captured build log on the host.
