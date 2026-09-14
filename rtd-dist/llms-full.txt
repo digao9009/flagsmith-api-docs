@@ -6,7 +6,7 @@ Flagsmith's Core and SDK APIs. Check out <a href='https://docs.flagsmith.com'>Fl
 
 ### Flagsmith API
 
-Path: `/api-reference.html`
+Path: `/en/latest/api-reference.html`
 Version: v1
 
 Flagsmith's Core and SDK APIs. Check out <a href='https://docs.flagsmith.com'>Flagsmith documentation</a>.

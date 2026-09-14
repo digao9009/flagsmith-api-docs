@@ -35,10 +35,11 @@ the slice keeps the docs home small enough to load for plain-fetch crawlers and 
 
 - Built with Sourcey 3.6.5 via `npx sourcey build` (see `source/build.log`).
 - Governed validation run under runx-cli 0.9.1; sealed receipt
-  `sha256:3239ab7fba8e77fe6f24b1d5cfca31e36409614a1bce9f0cda149326dcec2120`
+  `sha256:bde009f0f9854e04ff2486640fe5339d6e1714b3917036b7e7b232897a5a75dd`
   (schema `runx.receipt.v1`, outcome `completed`), published at `source/runx-receipt.json`.
-- Docs home: https://flagsmith-api-docs.readthedocs.io/ (806,877 bytes; sha256
-  `21c0e53ff4f3a1eee1468d0fd7b2577b98a07849abfbef15df7c2d678f6fba66`).
+- Docs home: https://flagsmith-api-docs.readthedocs.io/en/latest/ (built artifact
+  806,917 bytes, sha256 `286dde4c5a9bcbc2f94d2e8ba175394962a062bf5e871d9da528b5db87ab7d5f`;
+  served pages include Read the Docs' standard addons script).
 - Subset spec sha256 `125a0713b0aa767fc066ca2e499341e047ba7e3a650b9919083a205da4120f4a`.
 - This is a community-generated reference; not affiliated with Flagsmith, removable on
   request.
